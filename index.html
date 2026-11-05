@@ -161,7 +161,7 @@ dialog::backdrop{background:rgba(10,16,30,.6)}
 <dialog id="dlg" aria-labelledby="dlgt"><div id="dlgc"></div></dialog>
 
 <script type="module">
-import { standings, buildBracket, computeRecords, curConfOf, CUR_NAMES } from "./js/engine.js";
+import { standings, buildBracket, computeRecords, curConfOf, CUR_NAMES } from "./js/engine.js?v=__V__";
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -171,8 +171,8 @@ const store = {
 };
 
 const [teamsFile, gameData] = await Promise.all([
-  fetch("data/teams.json").then((r) => r.json()),
-  fetch("data/games.json").then((r) => r.json()).catch(() => ({ season: 2026, weeks: [], games: [], teams: {} })),
+  fetch("data/teams.json?v=__V__").then((r) => r.json()),
+  fetch("data/games.json?v=__V__", { cache: "no-cache" }).then((r) => r.json()).catch(() => ({ season: 2026, weeks: [], games: [], teams: {} })),
 ]);
 
 const weeks = gameData.weeks && gameData.weeks.length ? gameData.weeks : [0];

@@ -34,6 +34,8 @@ jobs:
           git add data/games.json data/unmatched.json
           git diff --staged --quiet || (git commit -m "Update results" && git push)
         continue-on-error: true
+      - name: Stamp a build version so browsers never mix old and new files
+        run: sed -i "s/__V__/$(date +%s)/g" index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
