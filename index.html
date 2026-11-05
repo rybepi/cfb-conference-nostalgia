@@ -177,6 +177,7 @@ dialog::backdrop{background:rgba(0,0,0,.65)}
 <dialog id="about" aria-labelledby="abt"><div class="dh"><div><h3 id="abt">What's this?</h3></div><button class="btn x" type="button" id="abclose">Close</button></div>
 <div class="ab">
 <h4>Nostalgia vs. Current</h4><p id="abtext"></p>
+<h4>How standings work</h4><p id="abstand"></p>
 <h4>An unbiased playoff</h4><p id="abplay"></p>
 </div></dialog>
 <dialog id="dlg" aria-labelledby="dlgt"><div id="dlgc"></div></dialog>
@@ -284,6 +285,9 @@ function copy(st) {
   $("#modeword").textContent = old ? "Nostalgia" : "Current";
   document.title = "CFB Conference " + (old ? "Nostalgia" : "Current");
   $("#abtext").textContent = `Nostalgia replays the ${gameData.season} college football season on the conference map of 2004, so old leagues and old rivals compete again. Only games between teams that shared a conference then count toward the standings, and programs that were independent or not yet in the FBS are placed in the nearest conference. Current uses today's conferences and today's rivalries. Either way the page tracks real results, week by week, and you can click any team to see its schedule.`;
+  $("#abstand").textContent = old
+    ? `Teams are ranked only on games against members of their own 2004 conference; non-conference games do not count toward the ranking. Ties break by head-to-head, then record in today's conference, then overall record, then point differential in conference games. The Overall column is the one place every game appears, including non-conference and FCS opponents, and it is shown for context and as a late tiebreaker.`
+    : `Teams are ranked only on games against members of their own current conference; non-conference games do not count toward the ranking. Ties break by head-to-head, then overall record, then point differential in conference games. The Overall column is the one place every game appears, including non-conference and FCS opponents, and it is shown for context and as a late tiebreaker.`;
   $("#abplay").textContent = `The top two teams in each conference make the playoff, split into Power Tier 1 and Power Tier 2, with no seeding and no rankings. Each conference champion plays the runner-up from the next conference in a fixed order, and later rounds pair adjacent winners in bracket order. A bye appears only when a round has an odd number of teams, and it always goes to the last slot, so no committee, poll or random draw decides who gets one.`;
   for (const m of ["old", "now"]) $("#m-" + m).setAttribute("aria-pressed", String(state.mode === m));
 }
