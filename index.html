@@ -113,7 +113,7 @@ tr.cut td{border-bottom:2px dashed var(--red)}
 footer{margin-top:36px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
 footer p{margin:6px 0;max-width:80ch}
 footer a{color:var(--ink)}
-dialog{border:1px solid var(--line);border-top:4px solid var(--red);border-radius:6px;background:var(--card);color:var(--ink);padding:0;width:min(640px,calc(100vw - 24px));max-height:calc(100vh - 32px);overflow:auto}
+dialog{border:1px solid var(--line);border-top:4px solid var(--red);border-radius:6px;background:var(--card);color:var(--ink);padding:0;width:min(640px,calc(100vw - 24px));max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto;overscroll-behavior:contain;box-sizing:border-box}
 dialog::backdrop{background:rgba(0,0,0,.65)}
 .dh{display:flex;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--card)}
 .dh .hm{width:56px;height:38px}
@@ -134,7 +134,7 @@ dialog::backdrop{background:rgba(0,0,0,.65)}
 #toast.on{opacity:1}
 .sr{position:absolute;left:-9999px}
 .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-@media (max-width:560px){ h1{font-size:22px} .htools .ib{width:36px;height:36px} .segb{padding:0 9px!important;font-size:12px} .favw{min-width:0;padding:0 8px} .bar-row{gap:6px} .tscroll table{min-width:440px} .tscroll th:nth-child(2),.tscroll td.t{position:sticky;left:0;background:var(--card);box-shadow:1px 0 0 var(--line);z-index:1} .tscroll th:nth-child(2){background:var(--card)} .tscroll td.t{max-width:150px} .tscroll tr.fav td.t{background:var(--fav)} .tscroll td,.tscroll th{white-space:nowrap}  .wd{display:none} td,th{padding:6px 5px} .sched td,.sched th{padding:8px 6px}  }
+@media (max-width:560px){ dialog{width:calc(100% - 16px);max-height:calc(100dvh - 24px)} .dh{padding:10px 12px} .dh h3{font-size:20px} .sched th:first-child,.sched td:first-child{display:none} .sched td,.sched th{padding:8px 5px} .sched td:last-child,.sched th:last-child{white-space:nowrap;padding-right:10px} .sched .opp{gap:6px;min-width:0} h1{font-size:22px} .htools .ib{width:36px;height:36px} .segb{padding:0 9px!important;font-size:12px} .favw{min-width:0;padding:0 8px} .bar-row{gap:6px} .tscroll table{min-width:440px} .tscroll th:nth-child(2),.tscroll td.t{position:sticky;left:0;background:var(--card);box-shadow:1px 0 0 var(--line);z-index:1} .tscroll th:nth-child(2){background:var(--card)} .tscroll td.t{max-width:150px} .tscroll tr.fav td.t{background:var(--fav)} .tscroll td,.tscroll th{white-space:nowrap}  .wd{display:none} td,th{padding:6px 5px} .sched td,.sched th{padding:8px 6px}  }
 @media (prefers-reduced-motion:reduce){ #toast{transition:none} }
 </style>
 </head>
