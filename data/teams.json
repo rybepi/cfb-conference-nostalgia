@@ -238,6 +238,12 @@
    "slotted": false
   },
   {
+   "name": "North Dakota State",
+   "conf": "Big Ten",
+   "helmet": "North_Dakota_St.gif",
+   "slotted": true
+  },
+  {
    "name": "Baylor",
    "conf": "Big 12",
    "helmet": "Baylor_P.gif",
