@@ -121,39 +121,34 @@ export function standings(teamsFile, gameData, week, mode = "old") {
   };
 }
 
-const seedCmp = (a, b) =>
-  pct(b.ow, b.ol) - pct(a.ow, a.ol) ||
-  pct(b.cw, b.cl) - pct(a.cw, a.cl) ||
-  pct(b.tw, b.tl) - pct(a.tw, a.tl) ||
-  b.pd - a.pd ||
-  a.name.localeCompare(b.name);
-
-export function qualifiers(groups) {
-  const q = [];
-  for (const g of groups) q.push(...g.teams.slice(0, 2).map((t) => ({ ...t, label: g.label })));
-  return q.sort(seedCmp).map((t, i) => ({ ...t, seed: i + 1 }));
-}
-
-// Bracket shape. Rows = 4 quarterfinal lanes. Numbers are seeds; letters are earlier matches.
-export function bracketShape(n) {
-  if (n === 12) {
-    return {
-      r1: [{ id: "A", row: 1, a: 8, b: 9 }, { id: "B", row: 2, a: 5, b: 12 }, { id: "C", row: 3, a: 6, b: 11 }, { id: "D", row: 4, a: 7, b: 10 }],
-      qf: [{ id: "E", row: 1, a: 1, b: "A" }, { id: "F", row: 2, a: 4, b: "B" }, { id: "G", row: 3, a: 3, b: "C" }, { id: "H", row: 4, a: 2, b: "D" }],
-      byes: [1, 2, 3, 4],
-    };
+// Bracket with no seeding. Conferences are taken in a fixed order (not by record).
+// Round 1: each conference champion plays the runner-up of the NEXT conference in that order.
+// Later rounds pair adjacent winners in slot order; if a round has an odd number of
+// survivors, the last slot gets a bye. Nothing here compares teams across conferences.
+export function buildBracket(groups) {
+  const k = groups.length;
+  const pick = (g, i) => ({ ...g.teams[i], label: g.label, confRank: i + 1 });
+  let num = 0;
+  let cur = groups.map((g, i) => {
+    const n = { id: "r1-" + i, num: ++num, a: pick(g, 0), b: pick(groups[(i + 1) % k], 1), start: i, end: i + 1 };
+    n.wl = `Winner of Game ${n.num}`;
+    return n;
+  });
+  const rounds = [cur];
+  while (cur.length > 1) {
+    const next = [];
+    for (let i = 0; i < cur.length; i += 2) {
+      const r = rounds.length;
+      if (i + 1 < cur.length) {
+        const n = { id: `r${r + 1}-${i / 2}`, num: ++num, from: [cur[i], cur[i + 1]], start: cur[i].start, end: cur[i + 1].end };
+        n.wl = `Winner of Game ${n.num}`;
+        next.push(n);
+      } else {
+        next.push({ id: `r${r + 1}-${i / 2}`, bye: true, from: [cur[i]], start: cur[i].start, end: cur[i].end, wl: cur[i].wl });
+      }
+    }
+    rounds.push(next);
+    cur = next;
   }
-  if (n === 10) { // seeds 1-6 receive byes
-    return {
-      r1: [{ id: "A", row: 1, a: 8, b: 9 }, { id: "D", row: 4, a: 7, b: 10 }],
-      qf: [{ id: "E", row: 1, a: 1, b: "A" }, { id: "F", row: 2, a: 4, b: 5 }, { id: "G", row: 3, a: 3, b: 6 }, { id: "H", row: 4, a: 2, b: "D" }],
-      byes: [1, 2, 3, 4, 5, 6],
-    };
-  }
-  // 8 teams, no byes
-  return {
-    r1: [],
-    qf: [{ id: "E", row: 1, a: 1, b: 8 }, { id: "F", row: 2, a: 4, b: 5 }, { id: "G", row: 3, a: 3, b: 6 }, { id: "H", row: 4, a: 2, b: 7 }],
-    byes: [],
-  };
+  return { rounds, hasBye: rounds.flat().some((n) => n.bye) };
 }

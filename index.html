@@ -53,7 +53,9 @@ h2{font:700 26px var(--head);text-transform:uppercase;letter-spacing:.03em;margi
 .slot{display:flex;align-items:center;gap:8px;padding:6px 8px;min-height:44px}
 .slot+.slot{border-top:1px solid var(--line)}
 .slot.tbd{color:var(--muted);font-style:italic}
-.seed{font:700 14px var(--head);width:22px;text-align:center;color:var(--accent)}
+.seed{font:700 12px var(--head);width:30px;text-align:center;color:var(--accent);letter-spacing:.04em;text-transform:uppercase}
+.gn{font:600 11px var(--head);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:4px 8px 0}
+.m.byec{border-style:dashed}
 .hm{width:34px;height:23px;flex:0 0 auto;object-fit:contain;background:var(--chip);border-radius:4px;padding:1px}
 .nm{font-weight:600;line-height:1.15;min-width:0}
 .nm small{display:block;color:var(--muted);font-weight:400;font-size:12px}
@@ -159,7 +161,7 @@ dialog::backdrop{background:rgba(10,16,30,.6)}
 <dialog id="dlg" aria-labelledby="dlgt"><div id="dlgc"></div></dialog>
 
 <script type="module">
-import { standings, qualifiers, bracketShape, computeRecords, curConfOf, CUR_NAMES } from "./js/engine.js";
+import { standings, buildBracket, computeRecords, curConfOf, CUR_NAMES } from "./js/engine.js";
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -207,36 +209,22 @@ const rec = (w, l) => `${w}-${l}`;
 function slot(t, label) {
   if (!t) return `<div class="slot tbd"><span class="seed"></span><span>${esc(label || "TBD")}</span></div>`;
   const fav = state.fav === t.name ? " fav" : "";
-  return `<div class="slot${fav}" data-team="${esc(t.name)}" role="button" tabindex="0" aria-label="${esc(t.name)} schedule"><span class="seed">${t.seed ?? ""}</span>${helmet(t)}<span class="nm">${esc(t.name)}<small>${esc(t.label)} · ${rec(t.ow, t.ol)} conf · ${rec(t.tw, t.tl)}</small></span></div>`;
+  return `<div class="slot${fav}" data-team="${esc(t.name)}" role="button" tabindex="0" aria-label="${esc(t.name)} schedule"><span class="seed">${t.confRank === 1 ? "1st" : t.confRank === 2 ? "2nd" : ""}</span>${helmet(t)}<span class="nm">${esc(t.name)}<small>${esc(t.label)} · ${rec(t.ow, t.ol)} conf · ${rec(t.tw, t.tl)}</small></span></div>`;
 }
 
-function renderBracket(el, q) {
-  const n = q.length;
-  const seed = Object.fromEntries(q.map((t) => [t.seed, t]));
-  const shape = bracketShape(n);
-  const hasR1 = shape.r1.length > 0;
-  const c0 = hasR1 ? 0 : -1; // column shift when there is no first round
-  const col = { r1: 1, qf: 2 + c0, sf: 3 + c0, fin: 4 + c0 };
-  const nameOf = (v) => seed[v]?.name ?? "#" + v;
-  const side = (v) => {
-    if (typeof v === "number") return slot(seed[v]);
-    const m = shape.r1.find((x) => x.id === v);
-    return slot(null, `Winner of ${nameOf(m.a)} / ${nameOf(m.b)}`);
-  };
-  const matchHtml = (m, c) => `<div class="m" style="grid-column:${c};grid-row:${m.row + 1}">${side(m.a)}${side(m.b)}</div>`;
-  const heads = [];
-  if (hasR1) heads.push(["First round", col.r1]);
-  heads.push(["Quarterfinals", col.qf], ["Semifinals", col.sf], ["Championship", col.fin]);
-  let html = `<div class="grid" style="grid-template-columns:repeat(${hasR1 ? 4 : 3},minmax(190px,1fr))">` +
-    heads.map(([t, c]) => `<div class="col-h" style="grid-column:${c}">${t}</div>`).join("");
-  if (hasR1) html += shape.r1.map((m) => matchHtml(m, col.r1)).join("");
-  html += shape.qf.map((m) => matchHtml(m, col.qf)).join("");
-  html += `<div class="m" style="grid-column:${col.sf};grid-row:2 / span 2">${slot(null, "Quarterfinal 1 winner")}${slot(null, "Quarterfinal 2 winner")}</div>`;
-  html += `<div class="m" style="grid-column:${col.sf};grid-row:4 / span 2">${slot(null, "Quarterfinal 3 winner")}${slot(null, "Quarterfinal 4 winner")}</div>`;
-  html += `<div class="m" style="grid-column:${col.fin};grid-row:2 / span 4">${slot(null, "Semifinal 1 winner")}${slot(null, "Semifinal 2 winner")}</div>`;
-  html += `</div>`;
-  if (shape.byes.length) html += `<p class="tag" style="margin:12px 0 0">First-round byes: ${shape.byes.map((s) => seed[s] ? esc(seed[s].name) : "TBD").join(", ")}.</p>`;
-  el.innerHTML = html;
+function renderBracket(el, groups) {
+  const { rounds } = buildBracket(groups);
+  const R = rounds.length, k = groups.length;
+  const title = (r) => r === R - 1 ? "Championship" : r === R - 2 && R > 2 ? "Semifinals" : r === 0 ? "First round" : "Round " + (r + 1);
+  let html = `<div class="grid" style="grid-template-columns:repeat(${R},minmax(200px,1fr));grid-template-rows:auto repeat(${k},auto);min-width:${R * 215}px">`;
+  html += rounds.map((_, r) => `<div class="col-h" style="grid-column:${r + 1}">${title(r)}</div>`).join("");
+  rounds.forEach((nodes, r) => nodes.forEach((n) => {
+    const pos = `grid-column:${r + 1};grid-row:${n.start + 2} / ${n.end + 2}`;
+    if (r === 0) html += `<div class="m" style="${pos}"><div class="gn">Game ${n.num}</div>${slot(n.a)}${slot(n.b)}</div>`;
+    else if (n.bye) html += `<div class="m byec" style="${pos}">${slot(null, "Bye: " + n.wl + " advances")}</div>`;
+    else html += `<div class="m" style="${pos}"><div class="gn">Game ${n.num}</div>${slot(null, n.from[0].wl)}${slot(null, n.from[1].wl)}</div>`;
+  }));
+  el.innerHTML = html + "</div>";
 }
 
 function renderStandings(st) {
@@ -259,13 +247,13 @@ function renderStandings(st) {
 
 function copy(st) {
   const old = state.mode === "old";
-  const n1 = st.tier1.length * 2, n2 = st.tier2.length * 2;
   const names = (l) => l.map((g) => g.label).join(", ");
-  $("#sub").textContent = old
-    ? "The 2026 season, played out in the 2004 conferences. Records count only games between teams that shared a conference in 2004. Top two from each league make the playoff."
-    : "The 2026 season in today's conferences. Same format: the top two teams from each conference make the playoff.";
-  $("#tag1").textContent = `${names(st.tier1)}. ${n1} teams; ${n1 === 12 ? "seeds 1 to 4 get byes" : "no byes"}.`;
-  $("#tag2").textContent = `${names(st.tier2)}. ${n2} teams; ${n2 === 12 ? "seeds 1 to 4 get byes" : "seeds 1 to 6 get byes"}.`;
+  const tag = (l) => {
+    const odd = buildBracket(l).hasBye;
+    return `${names(l)}. ${l.length} conferences, ${l.length * 2} teams. Each champion plays the runner-up from the next conference in this fixed order. No seeding.${odd ? " Where a round has an odd number of winners, the last slot's winner gets a bye." : ""}`;
+  };
+  $("#tag1").textContent = tag(st.tier1);
+  $("#tag2").textContent = tag(st.tier2);
   $("#tagst").textContent = old
     ? "Ranked by 2004-conference record, then head-to-head among tied teams, current-conference record, overall record, and point differential in 2004-conference games. Dashed line marks the playoff cut."
     : "Ranked by conference record, then head-to-head among tied teams, overall record, and point differential in conference games. Dashed line marks the playoff cut.";
@@ -277,8 +265,8 @@ function copy(st) {
 
 function render() {
   const st = standings(teamsFile, gameData, state.week, state.mode);
-  renderBracket($("#bk1"), qualifiers(st.tier1));
-  renderBracket($("#bk2"), qualifiers(st.tier2));
+  renderBracket($("#bk1"), st.tier1.map((g) => ({ ...g, teams: g.teams })));
+  renderBracket($("#bk2"), st.tier2);
   renderStandings(st);
   copy(st);
   $("#tabs").innerHTML = weeks.map((w) => `<button class="tab" role="tab" aria-selected="${w === state.week}" data-w="${w}">Week ${w}</button>`).join("");
