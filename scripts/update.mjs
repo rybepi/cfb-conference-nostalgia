@@ -34,14 +34,10 @@ for (const t of teamsFile.teams) byNorm.set(norm(t.name), t.name);
 for (const [k, v] of Object.entries(ALIASES)) byNorm.set(norm(k), v);
 
 function match(team) {
-  for (const c of [team.location, team.shortDisplayName, team.displayName, team.name]) {
+  // Exact school-name matches only. Never strip words: "Texas Southern" or
+  // "Alabama A&M" would otherwise collapse onto "Texas" or "Alabama".
+  for (const c of [team.location, team.shortDisplayName]) {
     const hit = byNorm.get(norm(c));
-    if (hit) return hit;
-  }
-  // "North Carolina Tar Heels" style: strip the mascot word(s) from the end
-  const words = String(team.displayName || "").split(" ");
-  for (let n = words.length - 1; n >= 1; n--) {
-    const hit = byNorm.get(norm(words.slice(0, n).join(" ")));
     if (hit) return hit;
   }
   return null;
@@ -81,6 +77,11 @@ for (let w = 0; w <= 16; w++) {
       const name = match(c.team || {});
       if (!name) {
         unmatched.set(c.team?.displayName || "?", (unmatched.get(c.team?.displayName || "?") || 0) + 1);
+        ok = false; continue;
+      }
+      if (teamMeta[name] && teamMeta[name].espnId !== c.team.id) {
+        console.warn(`COLLISION: "${c.team.displayName}" (id ${c.team.id}) also maps to ${name} (id ${teamMeta[name].espnId}); skipping`);
+        unmatched.set(c.team.displayName, (unmatched.get(c.team.displayName) || 0) + 1);
         ok = false; continue;
       }
       sides[c.homeAway] = { name, score: Number(c.score ?? 0) };
