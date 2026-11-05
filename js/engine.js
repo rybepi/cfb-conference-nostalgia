@@ -1,21 +1,36 @@
 // Standings + bracket engine. Pure functions; used by the page and by tests.
-// Ranking within a 2004 conference, in order:
-//   1) 2004-conference record  2) head-to-head among tied teams
-//   3) current-conference record  4) overall record
-//   5) point differential in 2004-conference games
+// Ranking within a conference, in order:
+//   1) conference record (2004 map in "old" mode, current map in "now" mode)
+//   2) head-to-head among tied teams
+//   3) current-conference record (old mode only; a no-op in now mode)
+//   4) overall record
+//   5) point differential in conference games
+
+export const CUR_NAMES = {
+  "1": "ACC", "4": "Big 12", "5": "Big Ten", "8": "SEC",
+  "151": "American", "12": "C-USA", "15": "MAC", "17": "Mountain West", "9": "Pac-12", "37": "Sun Belt",
+  "18": "Independents",
+};
+export const POWER_CUR = ["1", "4", "5", "8"];
 
 const pct = (w, l) => (w + l ? w / (w + l) : 0.5);
 
-export function computeRecords(teamsFile, gameData, week) {
-  const confOf = {};
-  for (const t of teamsFile.teams) confOf[t.name] = t.conf;
+export function curConfOf(teamsFile, gameData, name) {
+  const t = teamsFile.teams.find((x) => x.name === name);
+  return (t && t.curOverride) || gameData.teams?.[name]?.curConf || "";
+}
+
+export function computeRecords(teamsFile, gameData, week, mode = "old") {
   const cur = {};
-  for (const [n, m] of Object.entries(gameData.teams || {})) cur[n] = m.curConf;
+  for (const t of teamsFile.teams) cur[t.name] = t.curOverride || gameData.teams?.[t.name]?.curConf || "";
+  const rawCur = {};
+  for (const [n, m] of Object.entries(gameData.teams || {})) rawCur[n] = m.curConf;
 
   const R = {};
   for (const t of teamsFile.teams) {
     R[t.name] = {
-      name: t.name, conf: t.conf, helmet: t.helmet, slotted: t.slotted,
+      name: t.name, conf: t.conf, cur: cur[t.name], grp: mode === "old" ? t.conf : cur[t.name],
+      helmet: t.helmet, slotted: t.slotted && (mode === "old" || !!t.curOverride),
       ow: 0, ol: 0, cw: 0, cl: 0, tw: 0, tl: 0, pd: 0, h2h: {},
     };
   }
@@ -27,9 +42,9 @@ export function computeRecords(teamsFile, gameData, week) {
     if (diff === 0) continue;
     const [win, lose] = diff > 0 ? [a, b] : [b, a];
     win.tw++; lose.tl++;
-    const sameCur = cur[a.name] && cur[a.name] === cur[b.name];
-    if (sameCur) { win.cw++; lose.cl++; }
-    if (a.conf === b.conf && a.conf !== "Independent") {
+    // Secondary record: real current-conference games (old mode tiebreaker #3).
+    if (mode === "old" && rawCur[a.name] && rawCur[a.name] === rawCur[b.name] && rawCur[a.name] !== "18") { win.cw++; lose.cl++; }
+    if (a.grp && a.grp === b.grp) {
       win.ow++; lose.ol++;
       a.pd += diff; b.pd -= diff;
       win.h2h[lose.name] = (win.h2h[lose.name] || 0) + 1;
@@ -68,7 +83,6 @@ function rank(teams, stage = 0) {
       let w = 0, l = 0;
       for (const [opp, net] of Object.entries(t.h2h)) {
         if (!names.has(opp)) continue;
-        // h2h stores net wins; count games from sign (approximation exact for single meetings)
         if (net > 0) w += net; else if (net < 0) l += -net;
       }
       h[t.name] = pct(w, l);
@@ -79,18 +93,26 @@ function rank(teams, stage = 0) {
   return groupBy(sorted, keyFn).flatMap((g) => rank(g, stage + 1));
 }
 
-export function standings(teamsFile, gameData, week) {
-  const R = computeRecords(teamsFile, gameData, week);
-  const out = {};
-  const confs = [...teamsFile.tier1, ...teamsFile.tier2, "Independent"];
-  for (const c of confs) {
-    const members = Object.values(R).filter((t) => t.conf === c);
-    const ranked = c === "Independent"
-      ? members.sort((a, b) => a.name.localeCompare(b.name))
-      : rank(members.sort((a, b) => a.name.localeCompare(b.name)));
-    out[c] = ranked;
+// Returns { tier1: [{key,label,teams}], tier2: [...] } with each list ranked.
+export function standings(teamsFile, gameData, week, mode = "old") {
+  const R = computeRecords(teamsFile, gameData, week, mode);
+  const all = Object.values(R);
+  const build = (key, label) => ({
+    key, label,
+    teams: rank(all.filter((t) => t.grp === key).sort((a, b) => a.name.localeCompare(b.name))),
+  });
+  if (mode === "old") {
+    return {
+      tier1: teamsFile.tier1.map((c) => build(c, c)),
+      tier2: teamsFile.tier2.map((c) => build(c, c)),
+    };
   }
-  return out;
+  const ids = [...new Set(all.map((t) => t.cur).filter(Boolean))];
+  const others = ids.filter((id) => !POWER_CUR.includes(id)).sort((a, b) => (CUR_NAMES[a] || a).localeCompare(CUR_NAMES[b] || b));
+  return {
+    tier1: POWER_CUR.filter((id) => ids.includes(id)).map((id) => build(id, CUR_NAMES[id] || id)),
+    tier2: others.map((id) => build(id, CUR_NAMES[id] || id)),
+  };
 }
 
 const seedCmp = (a, b) =>
@@ -100,22 +122,32 @@ const seedCmp = (a, b) =>
   b.pd - a.pd ||
   a.name.localeCompare(b.name);
 
-export function qualifiers(stand, confList) {
+export function qualifiers(groups) {
   const q = [];
-  for (const c of confList) q.push(...stand[c].slice(0, 2).map((t) => ({ ...t, confRank: stand[c].indexOf(t) + 1 })));
+  for (const g of groups) q.push(...g.teams.slice(0, 2).map((t) => ({ ...t, label: g.label })));
   return q.sort(seedCmp).map((t, i) => ({ ...t, seed: i + 1 }));
 }
 
-// Bracket shape. Rows = 4 quarterfinal lanes. "s" = seed, "w" = winner of a match id.
+// Bracket shape. Rows = 4 quarterfinal lanes. Numbers are seeds; letters are earlier matches.
 export function bracketShape(n) {
   if (n === 12) {
     return {
       r1: [{ id: "A", row: 1, a: 8, b: 9 }, { id: "B", row: 2, a: 5, b: 12 }, { id: "C", row: 3, a: 6, b: 11 }, { id: "D", row: 4, a: 7, b: 10 }],
       qf: [{ id: "E", row: 1, a: 1, b: "A" }, { id: "F", row: 2, a: 4, b: "B" }, { id: "G", row: 3, a: 3, b: "C" }, { id: "H", row: 4, a: 2, b: "D" }],
+      byes: [1, 2, 3, 4],
     };
   }
-  return { // 10 teams: seeds 1-6 receive byes
-    r1: [{ id: "A", row: 1, a: 8, b: 9 }, { id: "D", row: 4, a: 7, b: 10 }],
-    qf: [{ id: "E", row: 1, a: 1, b: "A" }, { id: "F", row: 2, a: 4, b: 5 }, { id: "G", row: 3, a: 3, b: 6 }, { id: "H", row: 4, a: 2, b: "D" }],
+  if (n === 10) { // seeds 1-6 receive byes
+    return {
+      r1: [{ id: "A", row: 1, a: 8, b: 9 }, { id: "D", row: 4, a: 7, b: 10 }],
+      qf: [{ id: "E", row: 1, a: 1, b: "A" }, { id: "F", row: 2, a: 4, b: 5 }, { id: "G", row: 3, a: 3, b: 6 }, { id: "H", row: 4, a: 2, b: "D" }],
+      byes: [1, 2, 3, 4, 5, 6],
+    };
+  }
+  // 8 teams, no byes
+  return {
+    r1: [],
+    qf: [{ id: "E", row: 1, a: 1, b: 8 }, { id: "F", row: 2, a: 4, b: 5 }, { id: "G", row: 3, a: 3, b: 6 }, { id: "H", row: 4, a: 2, b: 7 }],
+    byes: [],
   };
 }

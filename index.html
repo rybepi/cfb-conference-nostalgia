@@ -77,6 +77,10 @@ tr.cut td{border-bottom:2px dashed var(--accent)}
 footer{margin-top:40px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:16px}
 footer p{margin:6px 0;max-width:80ch}
 .hide-sm{display:table-cell}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:8px;overflow:hidden}
+.segb{font:600 15px var(--body);color:var(--ink);background:var(--panel);border:0;padding:8px 12px;min-height:40px;cursor:pointer}
+.segb+.segb{border-left:1.5px solid var(--ink)}
+.segb[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 @media (max-width:560px){ .hide-sm{display:none} .asof{margin:0} td,th{padding:5px 5px} }
 @media (prefers-reduced-motion:no-preference){ .tab{transition:background .15s,color .15s} }
 </style>
@@ -85,13 +89,17 @@ footer p{margin:6px 0;max-width:80ch}
 <div class="wrap">
   <header>
     <h1>CFB Conference <span>Nostalgia</span></h1>
-    <p class="sub">The 2026 season, played out in the 2004 conferences. Records count only games between teams that shared a conference in 2004. Top two from each league make the playoff.</p>
+    <p class="sub" id="sub"></p>
   </header>
 
   <div class="bar" role="region" aria-label="Controls">
     <div class="bar-row">
       <div class="tabs" id="tabs" role="tablist" aria-label="Week"></div>
       <div class="ctl">
+        <div class="seg" role="group" aria-label="Conference alignment">
+          <button type="button" class="segb" id="m-old" data-m="old">2004 alignment</button>
+          <button type="button" class="segb" id="m-now" data-m="now">Current alignment</button>
+        </div>
         <label for="fav" class="sr" style="position:absolute;left:-9999px">Favorite team</label>
         <select id="fav" aria-label="Favorite team"><option value="">Favorite team: none</option></select>
         <button class="btn" id="share" type="button">Share this week</button>
@@ -103,23 +111,23 @@ footer p{margin:6px 0;max-width:80ch}
 
   <section aria-labelledby="t1h">
     <h2 id="t1h">Power Tier 1</h2>
-    <p class="tag">ACC, Big East, Big Ten, Big 12, Pac-10, SEC. Twelve teams; seeds 1 to 4 get byes.</p>
+    <p class="tag" id="tag1"></p>
     <div class="bk" id="bk1"></div>
   </section>
   <section aria-labelledby="t2h">
     <h2 id="t2h">Power Tier 2</h2>
-    <p class="tag">C-USA, MAC, Mountain West, Sun Belt, WAC. Ten teams; seeds 1 to 6 get byes.</p>
+    <p class="tag" id="tag2"></p>
     <div class="bk" id="bk2"></div>
   </section>
 
   <section aria-labelledby="sh">
     <h2 id="sh">Conference standings</h2>
-    <p class="tag">Ranked by 2004-conference record, then head-to-head among tied teams, current-conference record, overall record, and point differential in 2004-conference games. Dashed line marks the playoff cut.</p>
+    <p class="tag" id="tagst"></p>
     <div id="st"></div>
   </section>
 
   <footer>
-    <p><span class="dag">†</span> Program was not in the FBS in 2004 and has been placed in the nearest 2004 conference.</p>
+    <p id="dagnote"></p>
     <p>Results: ESPN public scoreboard feed, refreshed Sundays at 6 a.m. Eastern. Overall and current-conference records count games against FBS teams only. Teams with no games against 2004 conference mates show 0-0 and fall through to the next tiebreaker.</p>
     <p>Helmet images from <a href="https://nationalchamps.net/Helmet_Project/">The Helmet Project</a>, used under its non-commercial permission. School names and marks belong to their schools. A fan project, not affiliated with the NCAA or any school.</p>
   </footer>
@@ -141,17 +149,19 @@ const [teamsFile, gameData] = await Promise.all([
 ]);
 
 const weeks = gameData.weeks && gameData.weeks.length ? gameData.weeks : [0];
-const state = { week: weeks[weeks.length - 1], fav: store.get("cfb.fav") || "" };
+const state = { week: weeks[weeks.length - 1], fav: store.get("cfb.fav") || "", mode: store.get("cfb.mode") === "now" ? "now" : "old" };
 
 function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
   const w = Number(p.get("w"));
   if (weeks.includes(w)) state.week = w;
   if (p.has("t")) state.fav = p.get("t");
+  if (p.get("m") === "now" || p.get("m") === "old") state.mode = p.get("m");
 }
 function writeHash() {
   const p = new URLSearchParams();
   p.set("w", state.week);
+  p.set("m", state.mode);
   if (state.fav) p.set("t", state.fav);
   history.replaceState(null, "", "#" + p.toString());
 }
@@ -170,55 +180,80 @@ const rec = (w, l) => `${w}-${l}`;
 function slot(t, label) {
   if (!t) return `<div class="slot tbd"><span class="seed"></span><span>${esc(label || "TBD")}</span></div>`;
   const fav = state.fav === t.name ? " fav" : "";
-  return `<div class="slot${fav}"><span class="seed">${t.seed ?? ""}</span>${helmet(t)}<span class="nm">${esc(t.name)}<small>${esc(t.conf)} · ${rec(t.ow, t.ol)} conf · ${rec(t.tw, t.tl)}</small></span></div>`;
+  return `<div class="slot${fav}"><span class="seed">${t.seed ?? ""}</span>${helmet(t)}<span class="nm">${esc(t.name)}<small>${esc(t.label)} · ${rec(t.ow, t.ol)} conf · ${rec(t.tw, t.tl)}</small></span></div>`;
 }
 
 function renderBracket(el, q) {
   const n = q.length;
   const seed = Object.fromEntries(q.map((t) => [t.seed, t]));
   const shape = bracketShape(n);
-  const label = (m) => m ? `Winner of ${m}` : "TBD";
-  const matchHtml = (m, round) => {
-    const side = (v) => typeof v === "number" ? slot(seed[v]) : slot(null, `Winner of ${seed[shape.r1.find((x) => x.id === v).a]?.name ?? "#" + shape.r1.find((x) => x.id === v).a} / ${seed[shape.r1.find((x) => x.id === v).b]?.name ?? "#" + shape.r1.find((x) => x.id === v).b}`);
-    return `<div class="m" style="grid-column:${round};grid-row:${m.row + 1}">${side(m.a)}${side(m.b)}</div>`;
+  const hasR1 = shape.r1.length > 0;
+  const c0 = hasR1 ? 0 : -1; // column shift when there is no first round
+  const col = { r1: 1, qf: 2 + c0, sf: 3 + c0, fin: 4 + c0 };
+  const nameOf = (v) => seed[v]?.name ?? "#" + v;
+  const side = (v) => {
+    if (typeof v === "number") return slot(seed[v]);
+    const m = shape.r1.find((x) => x.id === v);
+    return slot(null, `Winner of ${nameOf(m.a)} / ${nameOf(m.b)}`);
   };
-  const byeNote = n === 12 ? [1, 2, 3, 4] : [1, 2, 3, 4, 5, 6];
-  let html = `<div class="grid">
-    <div class="col-h" style="grid-column:1">First round</div><div class="col-h" style="grid-column:2">Quarterfinals</div><div class="col-h" style="grid-column:3">Semifinals</div><div class="col-h" style="grid-column:4">Championship</div>`;
-  html += shape.r1.map((m) => matchHtml(m, 1)).join("");
-  html += shape.qf.map((m) => matchHtml(m, 2)).join("");
-  html += `<div class="m" style="grid-column:3;grid-row:2 / span 2">${slot(null, "Quarterfinal 1 winner")}${slot(null, "Quarterfinal 2 winner")}</div>`;
-  html += `<div class="m" style="grid-column:3;grid-row:4 / span 2">${slot(null, "Quarterfinal 3 winner")}${slot(null, "Quarterfinal 4 winner")}</div>`;
-  html += `<div class="m" style="grid-column:4;grid-row:2 / span 4">${slot(null, "Semifinal 1 winner")}${slot(null, "Semifinal 2 winner")}</div>`;
+  const matchHtml = (m, c) => `<div class="m" style="grid-column:${c};grid-row:${m.row + 1}">${side(m.a)}${side(m.b)}</div>`;
+  const heads = [];
+  if (hasR1) heads.push(["First round", col.r1]);
+  heads.push(["Quarterfinals", col.qf], ["Semifinals", col.sf], ["Championship", col.fin]);
+  let html = `<div class="grid" style="grid-template-columns:repeat(${hasR1 ? 4 : 3},minmax(190px,1fr))">` +
+    heads.map(([t, c]) => `<div class="col-h" style="grid-column:${c}">${t}</div>`).join("");
+  if (hasR1) html += shape.r1.map((m) => matchHtml(m, col.r1)).join("");
+  html += shape.qf.map((m) => matchHtml(m, col.qf)).join("");
+  html += `<div class="m" style="grid-column:${col.sf};grid-row:2 / span 2">${slot(null, "Quarterfinal 1 winner")}${slot(null, "Quarterfinal 2 winner")}</div>`;
+  html += `<div class="m" style="grid-column:${col.sf};grid-row:4 / span 2">${slot(null, "Quarterfinal 3 winner")}${slot(null, "Quarterfinal 4 winner")}</div>`;
+  html += `<div class="m" style="grid-column:${col.fin};grid-row:2 / span 4">${slot(null, "Semifinal 1 winner")}${slot(null, "Semifinal 2 winner")}</div>`;
   html += `</div>`;
-  // Bye list
-  html += `<p class="tag" style="margin:12px 0 0">First-round byes: ${byeNote.map((s) => seed[s] ? esc(seed[s].name) : "TBD").join(", ")}.</p>`;
+  if (shape.byes.length) html += `<p class="tag" style="margin:12px 0 0">First-round byes: ${shape.byes.map((s) => seed[s] ? esc(seed[s].name) : "TBD").join(", ")}.</p>`;
   el.innerHTML = html;
 }
 
 function renderStandings(st) {
-  const make = (c) => {
-    const rows = st[c].map((t, i) => {
-      const ranked = c !== "Independent";
-      const q = ranked && i < 2 ? " q" : "";
-      const cut = ranked && i === 1 ? " cut" : "";
+  const old = state.mode === "old";
+  const make = (g) => {
+    const rows = g.teams.map((t, i) => {
+      const q = i < 2 ? " q" : "";
+      const cut = i === 1 ? " cut" : "";
       const fav = state.fav === t.name ? " fav" : "";
-      return `<tr class="${q}${cut}${fav}"><td class="rk">${ranked ? i + 1 : ""}</td>
-        <td class="t"><div class="in">${helmet(t)}<span>${esc(t.name)}${t.slotted ? ' <span class="dag" title="Not in FBS in 2004">†</span>' : ""}</span></div></td>
-        <td>${rec(t.ow, t.ol)}</td><td class="hide-sm">${rec(t.cw, t.cl)}</td><td>${rec(t.tw, t.tl)}</td><td class="hide-sm">${t.pd > 0 ? "+" : ""}${t.pd}</td></tr>`;
+      return `<tr class="${q}${cut}${fav}"><td class="rk">${i + 1}</td>
+        <td class="t"><div class="in">${helmet(t)}<span>${esc(t.name)}${t.slotted ? ' <span class="dag" title="Placed in the nearest conference">†</span>' : ""}</span></div></td>
+        <td>${rec(t.ow, t.ol)}</td>${old ? `<td class="hide-sm">${rec(t.cw, t.cl)}</td>` : ""}<td>${rec(t.tw, t.tl)}</td><td class="hide-sm">${t.pd > 0 ? "+" : ""}${t.pd}</td></tr>`;
     }).join("");
-    return `<div class="conf"><h3>${esc(c)}<span>${st[c].length} teams</span></h3>
-      <table><thead><tr><th></th><th>Team</th><th>2004 conf</th><th class="hide-sm">Now conf</th><th>Overall</th><th class="hide-sm">Conf PD</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    return `<div class="conf"><h3>${esc(g.label)}<span>${g.teams.length} teams</span></h3>
+      <table><thead><tr><th></th><th>Team</th><th>${old ? "2004 conf" : "Conf"}</th>${old ? '<th class="hide-sm">Now conf</th>' : ""}<th>Overall</th><th class="hide-sm">Conf PD</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   };
   const group = (title, list) => `<h3 style="font:700 20px var(--head);text-transform:uppercase;margin:22px 0 10px">${title}</h3><div class="field">${list.map(make).join("")}</div>`;
-  $("#st").innerHTML = group("Power Tier 1", teamsFile.tier1) + group("Power Tier 2", teamsFile.tier2) + group("Independents", ["Independent"]);
+  $("#st").innerHTML = group("Power Tier 1", st.tier1) + group("Power Tier 2", st.tier2);
+}
+
+function copy(st) {
+  const old = state.mode === "old";
+  const n1 = st.tier1.length * 2, n2 = st.tier2.length * 2;
+  const names = (l) => l.map((g) => g.label).join(", ");
+  $("#sub").textContent = old
+    ? "The 2026 season, played out in the 2004 conferences. Records count only games between teams that shared a conference in 2004. Top two from each league make the playoff."
+    : "The 2026 season in today's conferences. Same format: the top two teams from each conference make the playoff.";
+  $("#tag1").textContent = `${names(st.tier1)}. ${n1} teams; ${n1 === 12 ? "seeds 1 to 4 get byes" : "no byes"}.`;
+  $("#tag2").textContent = `${names(st.tier2)}. ${n2} teams; ${n2 === 12 ? "seeds 1 to 4 get byes" : "seeds 1 to 6 get byes"}.`;
+  $("#tagst").textContent = old
+    ? "Ranked by 2004-conference record, then head-to-head among tied teams, current-conference record, overall record, and point differential in 2004-conference games. Dashed line marks the playoff cut."
+    : "Ranked by conference record, then head-to-head among tied teams, overall record, and point differential in conference games. Dashed line marks the playoff cut.";
+  $("#dagnote").innerHTML = old
+    ? '<span class="dag">†</span> Program was independent or not in the FBS in 2004 and has been placed in the nearest 2004 conference.'
+    : '<span class="dag">†</span> Plays football as an independent and has been placed in the nearest conference.';
+  for (const m of ["old", "now"]) $("#m-" + m).setAttribute("aria-pressed", String(state.mode === m));
 }
 
 function render() {
-  const st = standings(teamsFile, gameData, state.week);
-  renderBracket($("#bk1"), qualifiers(st, teamsFile.tier1));
-  renderBracket($("#bk2"), qualifiers(st, teamsFile.tier2));
+  const st = standings(teamsFile, gameData, state.week, state.mode);
+  renderBracket($("#bk1"), qualifiers(st.tier1));
+  renderBracket($("#bk2"), qualifiers(st.tier2));
   renderStandings(st);
+  copy(st);
   $("#tabs").innerHTML = weeks.map((w) => `<button class="tab" role="tab" aria-selected="${w === state.week}" data-w="${w}">Week ${w}</button>`).join("");
   const u = gameData.updated ? new Date(gameData.updated).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/New_York" }) + " ET" : "";
   $("#asof").textContent = u ? `Updated ${u}` : "No results loaded yet";
@@ -229,6 +264,10 @@ function render() {
 $("#tabs").addEventListener("click", (e) => {
   const b = e.target.closest("[data-w]"); if (!b) return;
   state.week = Number(b.dataset.w); render();
+});
+document.querySelector(".seg").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-m]"); if (!b) return;
+  state.mode = b.dataset.m; store.set("cfb.mode", state.mode); render();
 });
 const sel = $("#fav");
 for (const t of [...teamsFile.teams].sort((a, b) => a.name.localeCompare(b.name))) {

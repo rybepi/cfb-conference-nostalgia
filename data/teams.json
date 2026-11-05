@@ -109,7 +109,8 @@
    "name": "UConn",
    "conf": "Big East",
    "helmet": "Connecticut_N.gif",
-   "slotted": false
+   "slotted": false,
+   "curOverride": "1"
   },
   {
    "name": "Pittsburgh",
@@ -833,15 +834,16 @@
   },
   {
    "name": "Notre Dame",
-   "conf": "Independent",
+   "conf": "Big Ten",
    "helmet": "Notre_Dame.gif",
-   "slotted": false
+   "slotted": true,
+   "curOverride": "5"
   },
   {
    "name": "Navy",
-   "conf": "Independent",
+   "conf": "ACC",
    "helmet": "Navy.gif",
-   "slotted": false
+   "slotted": true
   }
  ]
 }
