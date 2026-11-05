@@ -2,7 +2,9 @@
 // and writes data/games.json. Runs in GitHub Actions (Node 20+, global fetch).
 import { readFileSync, writeFileSync } from "node:fs";
 
-const SEASON = Number(process.env.SEASON || 2026);
+// College football seasons run Aug-Jan: from July on it is this year's season, before that last year's.
+const now = new Date();
+const SEASON = Number(process.env.SEASON || (now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1));
 const BASE = "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard";
 
 const teamsFile = JSON.parse(readFileSync(new URL("../data/teams.json", import.meta.url)));

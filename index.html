@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CFB Conference Nostalgia</title>
-<meta name="description" content="The 2026 college football season through the 2004 conference map, with weekly standings and projected playoffs.">
+<meta name="description" content="The current college football season through the 2004 conference map, with weekly standings and projected playoffs.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -49,6 +49,10 @@ select{font:500 15px var(--body);color:var(--ink);background:var(--card);border:
 .ib:hover,.btn:hover,.segb:hover,select:hover{border-color:var(--red)}
 :focus-visible{outline:3px solid var(--red);outline-offset:2px}
 .sp{flex:1}
+.jump{display:flex;gap:6px}
+.navb{font:700 13px var(--head);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 14px;min-height:40px;cursor:pointer}
+.navb:hover{border-color:var(--red);color:var(--red)}
+h3.tier{font:700 19px/1.1 var(--head);text-transform:uppercase;letter-spacing:.03em;margin:22px 0 4px}
 .asof{color:var(--muted);font-size:13px;margin:0}
 main{padding-bottom:48px}
 section{margin-top:28px}
@@ -109,20 +113,20 @@ dialog::backdrop{background:rgba(0,0,0,.65)}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:4px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
 #toast.on{opacity:1}
 .sr{position:absolute;left:-9999px}
-@media (max-width:560px){ .hide-sm{display:none} .wd{display:none} td,th{padding:6px 5px} .sched td,.sched th{padding:8px 6px} .asof{width:100%} .sp{display:none} }
+@media (max-width:560px){ .jump{width:100%} .navb{flex:1} .hide-sm{display:none} .wd{display:none} td,th{padding:6px 5px} .sched td,.sched th{padding:8px 6px} .asof{width:100%} .sp{display:none} }
 @media (prefers-reduced-motion:reduce){ #toast{transition:none} }
 </style>
 </head>
 <body>
 <header class="top"><div class="wrap">
-  <h1>CFB Conference <span>Nostalgia</span></h1>
+  <h1>CFB Conference <span id="modeword">Nostalgia</span></h1>
   <p class="what"><button type="button" class="lnk" id="whatbtn">What's this?</button></p>
 </div></header>
 
 <div class="bar" role="region" aria-label="Controls"><div class="wrap">
   <div class="bar-row">
     <div class="seg" role="group" aria-label="Conference alignment">
-      <button type="button" class="segb" id="m-old" data-m="old">2004</button>
+      <button type="button" class="segb" id="m-old" data-m="old">Nostalgia</button>
       <button type="button" class="segb" id="m-now" data-m="now">Current</button>
     </div>
     <label for="week" class="sr">Week</label>
@@ -136,24 +140,26 @@ dialog::backdrop{background:rgba(0,0,0,.65)}
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
     </button>
     <span class="sp"></span>
+    <nav class="jump" aria-label="Jump to section">
+      <button type="button" class="navb" data-go="playoff">Playoff</button>
+      <button type="button" class="navb" data-go="standings">Standings</button>
+    </nav>
     <p class="asof" id="asof"></p>
   </div>
 </div></div>
 
 <main class="wrap">
-  <section aria-labelledby="t1h">
-    <h2 id="t1h">Power Tier 1</h2>
+  <section id="playoff" aria-labelledby="ph">
+    <h2 id="ph">Playoff</h2>
+    <h3 class="tier" id="t1h">Power Tier 1</h3>
     <p class="tag" id="tag1"></p>
     <div class="bk" id="bk1"></div>
-  </section>
-  <section aria-labelledby="t2h">
-    <h2 id="t2h">Power Tier 2</h2>
+    <h3 class="tier" id="t2h">Power Tier 2</h3>
     <p class="tag" id="tag2"></p>
     <div class="bk" id="bk2"></div>
   </section>
-
-  <section aria-labelledby="sh">
-    <h2 id="sh">Conference standings</h2>
+  <section id="standings" aria-labelledby="sh">
+    <h2 id="sh">Standings</h2>
     <p class="tag" id="tagst"></p>
     <div id="st"></div>
   </section>
@@ -167,7 +173,7 @@ dialog::backdrop{background:rgba(0,0,0,.65)}
 <div id="toast" role="status" aria-live="polite"></div>
 
 <dialog id="about" aria-labelledby="abt"><div class="dh"><div><h3 id="abt">What's this?</h3></div><button class="btn x" type="button" id="abclose">Close</button></div>
-<div class="ab"><p>This site replays the 2026 college football season through the conference map of 2004, so old leagues and old rivals compete again. Only games between teams that shared a conference then count toward the standings, and programs that were independent or not yet in the FBS are placed in the nearest conference. The top two teams from each conference make a projected playoff, split into Power Tier 1 and Power Tier 2, with each champion facing a runner-up and no seeding. Switch to Current for the same format with today's conferences, and click any team to see its schedule.</p></div></dialog>
+<div class="ab"><p id="abtext"></p></div></dialog>
 <dialog id="dlg" aria-labelledby="dlgt"><div id="dlgc"></div></dialog>
 
 <script type="module">
@@ -182,7 +188,7 @@ const store = {
 
 const [teamsFile, gameData] = await Promise.all([
   fetch("data/teams.json?v=__V__").then((r) => r.json()),
-  fetch("data/games.json?v=__V__", { cache: "no-cache" }).then((r) => r.json()).catch(() => ({ season: 2026, weeks: [], games: [], teams: {} })),
+  fetch("data/games.json?v=__V__", { cache: "no-cache" }).then((r) => r.json()).catch(() => ({ season: new Date().getFullYear(), weeks: [], games: [], teams: {} })),
 ]);
 
 const weeks = gameData.weeks && gameData.weeks.length ? gameData.weeks : [0];
@@ -270,6 +276,9 @@ function copy(st) {
   $("#dagnote").innerHTML = old
     ? '<span class="dag">†</span> Program was independent or not in the FBS in 2004 and has been placed in the nearest 2004 conference.'
     : '<span class="dag">†</span> Plays football as an independent and has been placed in the nearest conference.';
+  $("#modeword").textContent = old ? "Nostalgia" : "Current";
+  document.title = "CFB Conference " + (old ? "Nostalgia" : "Current");
+  $("#abtext").textContent = `This site replays the ${gameData.season} college football season through the conference map of 2004, so old leagues and old rivals compete again. Only games between teams that shared a conference then count toward the standings, and programs that were independent or not yet in the FBS are placed in the nearest conference. The top two teams from each conference make a projected playoff, split into Power Tier 1 and Power Tier 2, with each champion facing a runner-up and no seeding. Switch to Current for the same format with today's conferences, and click any team to see its schedule.`;
   for (const m of ["old", "now"]) $("#m-" + m).setAttribute("aria-pressed", String(state.mode === m));
 }
 
@@ -362,6 +371,13 @@ function openTeam(name) {
 }
 const about = $("#about");
 document.addEventListener("click", (e) => {
+  const go = e.target.closest("[data-go]");
+  if (go) {
+    const el = document.getElementById(go.dataset.go);
+    el.style.scrollMarginTop = (document.querySelector(".bar").offsetHeight + 8) + "px";
+    el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    return;
+  }
   if (e.target.closest("#whatbtn")) { about.showModal(); return; }
   if (e.target.closest("#abclose") || e.target === about) { about.close(); return; }
   if (e.target.closest("#dclose")) { dlg.close(); return; }
