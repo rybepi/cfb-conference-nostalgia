@@ -1,0 +1,841 @@
+{
+ "tier1": [
+  "ACC",
+  "Big East",
+  "Big Ten",
+  "Big 12",
+  "Pac-10",
+  "SEC"
+ ],
+ "tier2": [
+  "C-USA",
+  "MAC",
+  "MWC",
+  "Sun Belt",
+  "WAC"
+ ],
+ "teams": [
+  {
+   "name": "Clemson",
+   "conf": "ACC",
+   "helmet": "Clemson.gif",
+   "slotted": false
+  },
+  {
+   "name": "Duke",
+   "conf": "ACC",
+   "helmet": "Duke_B.gif",
+   "slotted": false
+  },
+  {
+   "name": "Florida State",
+   "conf": "ACC",
+   "helmet": "Florida_St.gif",
+   "slotted": false
+  },
+  {
+   "name": "Georgia Tech",
+   "conf": "ACC",
+   "helmet": "Georgia_Tech_T.gif",
+   "slotted": false
+  },
+  {
+   "name": "Maryland",
+   "conf": "ACC",
+   "helmet": "Maryland_OLD12.gif",
+   "slotted": false
+  },
+  {
+   "name": "Miami",
+   "conf": "ACC",
+   "helmet": "Miami_FL.gif",
+   "slotted": false
+  },
+  {
+   "name": "NC State",
+   "conf": "ACC",
+   "helmet": "North_Carolina_St_T.gif",
+   "slotted": false
+  },
+  {
+   "name": "North Carolina",
+   "conf": "ACC",
+   "helmet": "North_Carolina_L.gif",
+   "slotted": false
+  },
+  {
+   "name": "Virginia",
+   "conf": "ACC",
+   "helmet": "Virginia_Q.gif",
+   "slotted": false
+  },
+  {
+   "name": "Virginia Tech",
+   "conf": "ACC",
+   "helmet": "Virginia_Tech_AG.gif",
+   "slotted": false
+  },
+  {
+   "name": "Wake Forest",
+   "conf": "ACC",
+   "helmet": "Wake_Forest_E.gif",
+   "slotted": false
+  },
+  {
+   "name": "App State",
+   "conf": "ACC",
+   "helmet": "Appalachian_St_D.gif",
+   "slotted": true
+  },
+  {
+   "name": "Charlotte",
+   "conf": "ACC",
+   "helmet": "Charlotte_U.gif",
+   "slotted": true
+  },
+  {
+   "name": "Coastal Carolina",
+   "conf": "ACC",
+   "helmet": "Coastal_Carolina.gif",
+   "slotted": true
+  },
+  {
+   "name": "Boston College",
+   "conf": "Big East",
+   "helmet": "Boston_College_OLD2.gif",
+   "slotted": false
+  },
+  {
+   "name": "UConn",
+   "conf": "Big East",
+   "helmet": "Connecticut_N.gif",
+   "slotted": false
+  },
+  {
+   "name": "Pittsburgh",
+   "conf": "Big East",
+   "helmet": "Pittsburgh_D.gif",
+   "slotted": false
+  },
+  {
+   "name": "Rutgers",
+   "conf": "Big East",
+   "helmet": "Rutgers.gif",
+   "slotted": false
+  },
+  {
+   "name": "Syracuse",
+   "conf": "Big East",
+   "helmet": "Syracuse_M.gif",
+   "slotted": false
+  },
+  {
+   "name": "Temple",
+   "conf": "Big East",
+   "helmet": "Temple_AN.gif",
+   "slotted": false
+  },
+  {
+   "name": "West Virginia",
+   "conf": "Big East",
+   "helmet": "West_Virginia.gif",
+   "slotted": false
+  },
+  {
+   "name": "Delaware",
+   "conf": "Big East",
+   "helmet": "Delaware.gif",
+   "slotted": true
+  },
+  {
+   "name": "UMass",
+   "conf": "Big East",
+   "helmet": "Massachusetts_N.gif",
+   "slotted": true
+  },
+  {
+   "name": "Old Dominion",
+   "conf": "Big East",
+   "helmet": "Old_Dominion_E.gif",
+   "slotted": true
+  },
+  {
+   "name": "James Madison",
+   "conf": "Big East",
+   "helmet": "James_Madison_M.gif",
+   "slotted": true
+  },
+  {
+   "name": "Liberty",
+   "conf": "Big East",
+   "helmet": "Liberty_T.gif",
+   "slotted": true
+  },
+  {
+   "name": "Illinois",
+   "conf": "Big Ten",
+   "helmet": "Illinois_V.gif",
+   "slotted": false
+  },
+  {
+   "name": "Indiana",
+   "conf": "Big Ten",
+   "helmet": "Indiana_R.gif",
+   "slotted": false
+  },
+  {
+   "name": "Iowa",
+   "conf": "Big Ten",
+   "helmet": "Iowa.gif",
+   "slotted": false
+  },
+  {
+   "name": "Michigan",
+   "conf": "Big Ten",
+   "helmet": "Michigan.gif",
+   "slotted": false
+  },
+  {
+   "name": "Michigan State",
+   "conf": "Big Ten",
+   "helmet": "Michigan_St_T.gif",
+   "slotted": false
+  },
+  {
+   "name": "Minnesota",
+   "conf": "Big Ten",
+   "helmet": "Minnesota_BI.gif",
+   "slotted": false
+  },
+  {
+   "name": "Northwestern",
+   "conf": "Big Ten",
+   "helmet": "Northwestern_OLD.gif",
+   "slotted": false
+  },
+  {
+   "name": "Ohio State",
+   "conf": "Big Ten",
+   "helmet": "Ohio_St.gif",
+   "slotted": false
+  },
+  {
+   "name": "Penn State",
+   "conf": "Big Ten",
+   "helmet": "Penn_St.gif",
+   "slotted": false
+  },
+  {
+   "name": "Purdue",
+   "conf": "Big Ten",
+   "helmet": "Purdue_V.gif",
+   "slotted": false
+  },
+  {
+   "name": "Wisconsin",
+   "conf": "Big Ten",
+   "helmet": "Wisconsin.gif",
+   "slotted": false
+  },
+  {
+   "name": "Baylor",
+   "conf": "Big 12",
+   "helmet": "Baylor_P.gif",
+   "slotted": false
+  },
+  {
+   "name": "Colorado",
+   "conf": "Big 12",
+   "helmet": "Colorado_H.gif",
+   "slotted": false
+  },
+  {
+   "name": "Iowa State",
+   "conf": "Big 12",
+   "helmet": "Iowa_St_Q.gif",
+   "slotted": false
+  },
+  {
+   "name": "Kansas",
+   "conf": "Big 12",
+   "helmet": "Kansas_AK.gif",
+   "slotted": false
+  },
+  {
+   "name": "Kansas State",
+   "conf": "Big 12",
+   "helmet": "Kansas_St.gif",
+   "slotted": false
+  },
+  {
+   "name": "Missouri",
+   "conf": "Big 12",
+   "helmet": "Missouri_AP.gif",
+   "slotted": false
+  },
+  {
+   "name": "Nebraska",
+   "conf": "Big 12",
+   "helmet": "Nebraska.gif",
+   "slotted": false
+  },
+  {
+   "name": "Oklahoma",
+   "conf": "Big 12",
+   "helmet": "Oklahoma.gif",
+   "slotted": false
+  },
+  {
+   "name": "Oklahoma State",
+   "conf": "Big 12",
+   "helmet": "Oklahoma_St_BK.gif",
+   "slotted": false
+  },
+  {
+   "name": "Texas",
+   "conf": "Big 12",
+   "helmet": "Texas.gif",
+   "slotted": false
+  },
+  {
+   "name": "Texas A&M",
+   "conf": "Big 12",
+   "helmet": "Texas_AM_OLD12.gif",
+   "slotted": false
+  },
+  {
+   "name": "Texas Tech",
+   "conf": "Big 12",
+   "helmet": "Texas_Tech_Z.gif",
+   "slotted": false
+  },
+  {
+   "name": "Missouri State",
+   "conf": "Big 12",
+   "helmet": "Missouri_St_S.gif",
+   "slotted": true
+  },
+  {
+   "name": "Arizona",
+   "conf": "Pac-10",
+   "helmet": "Arizona_L.gif",
+   "slotted": false
+  },
+  {
+   "name": "Arizona State",
+   "conf": "Pac-10",
+   "helmet": "Arizona_St_BV.gif",
+   "slotted": false
+  },
+  {
+   "name": "California",
+   "conf": "Pac-10",
+   "helmet": "California_OLD11.gif",
+   "slotted": false
+  },
+  {
+   "name": "Oregon",
+   "conf": "Pac-10",
+   "helmet": "Oregon_BG.gif",
+   "slotted": false
+  },
+  {
+   "name": "Oregon State",
+   "conf": "Pac-10",
+   "helmet": "Oregon_St_S.gif",
+   "slotted": false
+  },
+  {
+   "name": "Stanford",
+   "conf": "Pac-10",
+   "helmet": "Stanford_D.gif",
+   "slotted": false
+  },
+  {
+   "name": "UCLA",
+   "conf": "Pac-10",
+   "helmet": "UCLA_B.gif",
+   "slotted": false
+  },
+  {
+   "name": "USC",
+   "conf": "Pac-10",
+   "helmet": "Southern_California.gif",
+   "slotted": false
+  },
+  {
+   "name": "Washington",
+   "conf": "Pac-10",
+   "helmet": "Washington.gif",
+   "slotted": false
+  },
+  {
+   "name": "Washington State",
+   "conf": "Pac-10",
+   "helmet": "Washington_St_F.gif",
+   "slotted": false
+  },
+  {
+   "name": "Alabama",
+   "conf": "SEC",
+   "helmet": "Alabama.gif",
+   "slotted": false
+  },
+  {
+   "name": "Arkansas",
+   "conf": "SEC",
+   "helmet": "Arkansas.gif",
+   "slotted": false
+  },
+  {
+   "name": "Auburn",
+   "conf": "SEC",
+   "helmet": "Auburn.gif",
+   "slotted": false
+  },
+  {
+   "name": "Florida",
+   "conf": "SEC",
+   "helmet": "Florida.gif",
+   "slotted": false
+  },
+  {
+   "name": "Georgia",
+   "conf": "SEC",
+   "helmet": "Georgia.gif",
+   "slotted": false
+  },
+  {
+   "name": "Kentucky",
+   "conf": "SEC",
+   "helmet": "Kentucky_G.gif",
+   "slotted": false
+  },
+  {
+   "name": "LSU",
+   "conf": "SEC",
+   "helmet": "LSU.gif",
+   "slotted": false
+  },
+  {
+   "name": "Ole Miss",
+   "conf": "SEC",
+   "helmet": "Mississippi_OLD1.gif",
+   "slotted": false
+  },
+  {
+   "name": "Mississippi State",
+   "conf": "SEC",
+   "helmet": "Mississippi_St_AE.gif",
+   "slotted": false
+  },
+  {
+   "name": "South Carolina",
+   "conf": "SEC",
+   "helmet": "South_Carolina_O.gif",
+   "slotted": false
+  },
+  {
+   "name": "Tennessee",
+   "conf": "SEC",
+   "helmet": "Tennessee.gif",
+   "slotted": false
+  },
+  {
+   "name": "Vanderbilt",
+   "conf": "SEC",
+   "helmet": "Vanderbilt_O.gif",
+   "slotted": false
+  },
+  {
+   "name": "UAB",
+   "conf": "C-USA",
+   "helmet": "UAB_T.gif",
+   "slotted": false
+  },
+  {
+   "name": "Army",
+   "conf": "C-USA",
+   "helmet": "Army.gif",
+   "slotted": false
+  },
+  {
+   "name": "Cincinnati",
+   "conf": "C-USA",
+   "helmet": "Cincinnati.gif",
+   "slotted": false
+  },
+  {
+   "name": "East Carolina",
+   "conf": "C-USA",
+   "helmet": "East_Carolina_U.gif",
+   "slotted": false
+  },
+  {
+   "name": "Houston",
+   "conf": "C-USA",
+   "helmet": "Houston_R.gif",
+   "slotted": false
+  },
+  {
+   "name": "Louisville",
+   "conf": "C-USA",
+   "helmet": "Louisville_B.gif",
+   "slotted": false
+  },
+  {
+   "name": "Memphis",
+   "conf": "C-USA",
+   "helmet": "Memphis_BC.gif",
+   "slotted": false
+  },
+  {
+   "name": "Southern Miss",
+   "conf": "C-USA",
+   "helmet": "Southern_Mississippi_V.gif",
+   "slotted": false
+  },
+  {
+   "name": "South Florida",
+   "conf": "C-USA",
+   "helmet": "South_Florida_C.gif",
+   "slotted": false
+  },
+  {
+   "name": "TCU",
+   "conf": "C-USA",
+   "helmet": "Texas_Christian_K.gif",
+   "slotted": false
+  },
+  {
+   "name": "Tulane",
+   "conf": "C-USA",
+   "helmet": "Tulane_K.gif",
+   "slotted": false
+  },
+  {
+   "name": "Florida Atlantic",
+   "conf": "C-USA",
+   "helmet": "Florida_Atlantic_X.gif",
+   "slotted": true
+  },
+  {
+   "name": "FIU",
+   "conf": "C-USA",
+   "helmet": "Florida_International_T.gif",
+   "slotted": true
+  },
+  {
+   "name": "Western Kentucky",
+   "conf": "C-USA",
+   "helmet": "Western_Kentucky_AH.gif",
+   "slotted": true
+  },
+  {
+   "name": "Akron",
+   "conf": "MAC",
+   "helmet": "Akron_AN.gif",
+   "slotted": false
+  },
+  {
+   "name": "Bowling Green",
+   "conf": "MAC",
+   "helmet": "Bowling_Green_I.gif",
+   "slotted": false
+  },
+  {
+   "name": "Buffalo",
+   "conf": "MAC",
+   "helmet": "Buffalo_AN.gif",
+   "slotted": false
+  },
+  {
+   "name": "Kent State",
+   "conf": "MAC",
+   "helmet": "Kent_St_CC.gif",
+   "slotted": false
+  },
+  {
+   "name": "Marshall",
+   "conf": "MAC",
+   "helmet": "Marshall.gif",
+   "slotted": false
+  },
+  {
+   "name": "Miami (OH)",
+   "conf": "MAC",
+   "helmet": "Miami_OH_AJ.gif",
+   "slotted": false
+  },
+  {
+   "name": "Ohio",
+   "conf": "MAC",
+   "helmet": "Ohio_K.gif",
+   "slotted": false
+  },
+  {
+   "name": "UCF",
+   "conf": "MAC",
+   "helmet": "UCF_W.gif",
+   "slotted": false
+  },
+  {
+   "name": "Ball State",
+   "conf": "MAC",
+   "helmet": "Ball_State_J.gif",
+   "slotted": false
+  },
+  {
+   "name": "Central Michigan",
+   "conf": "MAC",
+   "helmet": "Central_Michigan_B.gif",
+   "slotted": false
+  },
+  {
+   "name": "Eastern Michigan",
+   "conf": "MAC",
+   "helmet": "Eastern_Michigan_L.gif",
+   "slotted": false
+  },
+  {
+   "name": "Northern Illinois",
+   "conf": "MAC",
+   "helmet": "Northern_Illinois_OLD13.gif",
+   "slotted": false
+  },
+  {
+   "name": "Toledo",
+   "conf": "MAC",
+   "helmet": "Toledo_OLD10.gif",
+   "slotted": false
+  },
+  {
+   "name": "Western Michigan",
+   "conf": "MAC",
+   "helmet": "Western_Michigan_BI.gif",
+   "slotted": false
+  },
+  {
+   "name": "Air Force",
+   "conf": "MWC",
+   "helmet": "Air_Force_S.gif",
+   "slotted": false
+  },
+  {
+   "name": "BYU",
+   "conf": "MWC",
+   "helmet": "BYU_B.gif",
+   "slotted": false
+  },
+  {
+   "name": "Colorado State",
+   "conf": "MWC",
+   "helmet": "Colorado_St.gif",
+   "slotted": false
+  },
+  {
+   "name": "New Mexico",
+   "conf": "MWC",
+   "helmet": "New_Mexico_AC.gif",
+   "slotted": false
+  },
+  {
+   "name": "San Diego State",
+   "conf": "MWC",
+   "helmet": "San_Diego_St.gif",
+   "slotted": false
+  },
+  {
+   "name": "UNLV",
+   "conf": "MWC",
+   "helmet": "UNLV_W.gif",
+   "slotted": false
+  },
+  {
+   "name": "Utah",
+   "conf": "MWC",
+   "helmet": "Utah.gif",
+   "slotted": false
+  },
+  {
+   "name": "Wyoming",
+   "conf": "MWC",
+   "helmet": "Wyoming_OLD5.gif",
+   "slotted": false
+  },
+  {
+   "name": "Arkansas State",
+   "conf": "Sun Belt",
+   "helmet": "Arkansas_St_AN.gif",
+   "slotted": false
+  },
+  {
+   "name": "Louisiana",
+   "conf": "Sun Belt",
+   "helmet": "Louisiana_AE.gif",
+   "slotted": false
+  },
+  {
+   "name": "UL Monroe",
+   "conf": "Sun Belt",
+   "helmet": "ULM_S.gif",
+   "slotted": false
+  },
+  {
+   "name": "Middle Tennessee",
+   "conf": "Sun Belt",
+   "helmet": "Middle_Tennessee_St_X.gif",
+   "slotted": false
+  },
+  {
+   "name": "New Mexico State",
+   "conf": "Sun Belt",
+   "helmet": "New_Mexico_St_T.gif",
+   "slotted": false
+  },
+  {
+   "name": "North Texas",
+   "conf": "Sun Belt",
+   "helmet": "North_Texas_Q.gif",
+   "slotted": false
+  },
+  {
+   "name": "Troy",
+   "conf": "Sun Belt",
+   "helmet": "Troy_BH.gif",
+   "slotted": false
+  },
+  {
+   "name": "Utah State",
+   "conf": "Sun Belt",
+   "helmet": "Utah_St_W.gif",
+   "slotted": false
+  },
+  {
+   "name": "Georgia Southern",
+   "conf": "Sun Belt",
+   "helmet": "Georgia_Southern_M.gif",
+   "slotted": true
+  },
+  {
+   "name": "Georgia State",
+   "conf": "Sun Belt",
+   "helmet": "Georgia_St_S.gif",
+   "slotted": true
+  },
+  {
+   "name": "South Alabama",
+   "conf": "Sun Belt",
+   "helmet": "South_Alabama_BP.gif",
+   "slotted": true
+  },
+  {
+   "name": "Jacksonville State",
+   "conf": "Sun Belt",
+   "helmet": "Jacksonville_St_H.gif",
+   "slotted": true
+  },
+  {
+   "name": "Kennesaw State",
+   "conf": "Sun Belt",
+   "helmet": "Kennesaw_St_B.gif",
+   "slotted": true
+  },
+  {
+   "name": "Boise State",
+   "conf": "WAC",
+   "helmet": "Boise_St_Q.gif",
+   "slotted": false
+  },
+  {
+   "name": "Fresno State",
+   "conf": "WAC",
+   "helmet": "Fresno_St_T.gif",
+   "slotted": false
+  },
+  {
+   "name": "Hawai'i",
+   "conf": "WAC",
+   "helmet": "Hawaii_H.gif",
+   "slotted": false
+  },
+  {
+   "name": "Louisiana Tech",
+   "conf": "WAC",
+   "helmet": "Louisiana_Tech_D.gif",
+   "slotted": false
+  },
+  {
+   "name": "Nevada",
+   "conf": "WAC",
+   "helmet": "Nevada_AB.gif",
+   "slotted": false
+  },
+  {
+   "name": "Rice",
+   "conf": "WAC",
+   "helmet": "Rice_D.gif",
+   "slotted": false
+  },
+  {
+   "name": "San José State",
+   "conf": "WAC",
+   "helmet": "San_Jose_St_G.gif",
+   "slotted": false
+  },
+  {
+   "name": "SMU",
+   "conf": "WAC",
+   "helmet": "Southern_Methodist_OLD2.gif",
+   "slotted": false
+  },
+  {
+   "name": "Tulsa",
+   "conf": "WAC",
+   "helmet": "Tulsa_W.gif",
+   "slotted": false
+  },
+  {
+   "name": "UTEP",
+   "conf": "WAC",
+   "helmet": "UTEP_AA.gif",
+   "slotted": false
+  },
+  {
+   "name": "Texas State",
+   "conf": "WAC",
+   "helmet": "Texas_St_BI.gif",
+   "slotted": true
+  },
+  {
+   "name": "UTSA",
+   "conf": "WAC",
+   "helmet": "UTSA_V.gif",
+   "slotted": true
+  },
+  {
+   "name": "Sam Houston",
+   "conf": "WAC",
+   "helmet": "Sam_Houston_St_2020.gif",
+   "slotted": true
+  },
+  {
+   "name": "Sacramento State",
+   "conf": "WAC",
+   "helmet": "Sacramento_St_AH.gif",
+   "slotted": true
+  },
+  {
+   "name": "Notre Dame",
+   "conf": "Independent",
+   "helmet": "Notre_Dame.gif",
+   "slotted": false
+  },
+  {
+   "name": "Navy",
+   "conf": "Independent",
+   "helmet": "Navy.gif",
+   "slotted": false
+  }
+ ]
+}
