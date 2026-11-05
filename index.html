@@ -77,6 +77,29 @@ tr.cut td{border-bottom:2px dashed var(--accent)}
 footer{margin-top:40px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:16px}
 footer p{margin:6px 0;max-width:80ch}
 .hide-sm{display:table-cell}
+[data-team]{cursor:pointer}
+[data-team]:hover .nm,[data-team]:hover td.t{text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:3px}
+dialog{border:2px solid var(--ink);border-radius:14px;background:var(--panel);color:var(--ink);padding:0;width:min(640px,calc(100vw - 24px));max-height:calc(100vh - 32px);overflow:auto}
+dialog::backdrop{background:rgba(10,16,30,.6)}
+.dh{display:flex;gap:12px;align-items:center;padding:16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel)}
+.dh .hm{width:56px;height:38px}
+.dh h3{font:700 24px var(--head);text-transform:uppercase;letter-spacing:.03em;margin:0;line-height:1.1}
+.dh p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.dh .x{margin-left:auto}
+.sched{width:100%;font-size:15px}
+.sched td,.sched th{padding:8px 10px;text-align:left}
+.sched th{font:600 12px var(--head);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line)}
+.sched td{border-bottom:1px solid var(--line);vertical-align:middle}
+.sched .opp{display:flex;align-items:center;gap:8px;font-weight:600}
+.sched .opp[data-team]{cursor:pointer}
+.ha{font:600 12px var(--head);letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-radius:4px;padding:1px 6px;white-space:nowrap}
+.res{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.res.w{color:#1d7a46}.res.l{color:var(--accent)}
+.pend{color:var(--muted)}
+.chip{font:600 11px var(--head);letter-spacing:.05em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:4px;padding:0 5px;margin-left:6px;white-space:nowrap}
+.sched td:nth-child(2){white-space:nowrap}
+@media (max-width:560px){.wd{display:none}.sched td,.sched th{padding:8px 6px}}
+.dn{padding:12px 16px 16px;color:var(--muted);font-size:13px}
 .seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:8px;overflow:hidden}
 .segb{font:600 15px var(--body);color:var(--ink);background:var(--panel);border:0;padding:8px 12px;min-height:40px;cursor:pointer}
 .segb+.segb{border-left:1.5px solid var(--ink)}
@@ -128,13 +151,15 @@ footer p{margin:6px 0;max-width:80ch}
 
   <footer>
     <p id="dagnote"></p>
-    <p>Results: ESPN public scoreboard feed, refreshed Sundays at 6 a.m. Eastern. Overall and current-conference records count games against FBS teams only. Teams with no games against 2004 conference mates show 0-0 and fall through to the next tiebreaker.</p>
+    <p>Results: ESPN public scoreboard feed, refreshed Sundays at 6 a.m. Eastern. Overall records include games against FCS opponents; conference records do not. Click any team to see its schedule. Teams with no games against 2004 conference mates show 0-0 and fall through to the next tiebreaker.</p>
     <p>Helmet images from <a href="https://nationalchamps.net/Helmet_Project/">The Helmet Project</a>, used under its non-commercial permission. School names and marks belong to their schools. A fan project, not affiliated with the NCAA or any school.</p>
   </footer>
 </div>
 
+<dialog id="dlg" aria-labelledby="dlgt"><div id="dlgc"></div></dialog>
+
 <script type="module">
-import { standings, qualifiers, bracketShape } from "./js/engine.js";
+import { standings, qualifiers, bracketShape, computeRecords, curConfOf, CUR_NAMES } from "./js/engine.js";
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -149,7 +174,7 @@ const [teamsFile, gameData] = await Promise.all([
 ]);
 
 const weeks = gameData.weeks && gameData.weeks.length ? gameData.weeks : [0];
-const state = { week: weeks[weeks.length - 1], fav: store.get("cfb.fav") || "", mode: store.get("cfb.mode") === "now" ? "now" : "old" };
+const state = { week: weeks[weeks.length - 1], fav: store.get("cfb.fav") || "", mode: store.get("cfb.mode") === "now" ? "now" : "old", sched: "" };
 
 function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
@@ -157,12 +182,14 @@ function readHash() {
   if (weeks.includes(w)) state.week = w;
   if (p.has("t")) state.fav = p.get("t");
   if (p.get("m") === "now" || p.get("m") === "old") state.mode = p.get("m");
+  state.sched = teamsFile.teams.some((t) => t.name === p.get("s")) ? p.get("s") : "";
 }
 function writeHash() {
   const p = new URLSearchParams();
   p.set("w", state.week);
   p.set("m", state.mode);
   if (state.fav) p.set("t", state.fav);
+  if (state.sched) p.set("s", state.sched);
   history.replaceState(null, "", "#" + p.toString());
 }
 readHash();
@@ -180,7 +207,7 @@ const rec = (w, l) => `${w}-${l}`;
 function slot(t, label) {
   if (!t) return `<div class="slot tbd"><span class="seed"></span><span>${esc(label || "TBD")}</span></div>`;
   const fav = state.fav === t.name ? " fav" : "";
-  return `<div class="slot${fav}"><span class="seed">${t.seed ?? ""}</span>${helmet(t)}<span class="nm">${esc(t.name)}<small>${esc(t.label)} · ${rec(t.ow, t.ol)} conf · ${rec(t.tw, t.tl)}</small></span></div>`;
+  return `<div class="slot${fav}" data-team="${esc(t.name)}" role="button" tabindex="0" aria-label="${esc(t.name)} schedule"><span class="seed">${t.seed ?? ""}</span>${helmet(t)}<span class="nm">${esc(t.name)}<small>${esc(t.label)} · ${rec(t.ow, t.ol)} conf · ${rec(t.tw, t.tl)}</small></span></div>`;
 }
 
 function renderBracket(el, q) {
@@ -219,7 +246,7 @@ function renderStandings(st) {
       const q = i < 2 ? " q" : "";
       const cut = i === 1 ? " cut" : "";
       const fav = state.fav === t.name ? " fav" : "";
-      return `<tr class="${q}${cut}${fav}"><td class="rk">${i + 1}</td>
+      return `<tr class="${q}${cut}${fav}" data-team="${esc(t.name)}" tabindex="0" role="button" aria-label="${esc(t.name)} schedule"><td class="rk">${i + 1}</td>
         <td class="t"><div class="in">${helmet(t)}<span>${esc(t.name)}${t.slotted ? ' <span class="dag" title="Placed in the nearest conference">†</span>' : ""}</span></div></td>
         <td>${rec(t.ow, t.ol)}</td>${old ? `<td class="hide-sm">${rec(t.cw, t.cl)}</td>` : ""}<td>${rec(t.tw, t.tl)}</td><td class="hide-sm">${t.pd > 0 ? "+" : ""}${t.pd}</td></tr>`;
     }).join("");
@@ -289,7 +316,66 @@ $("#theme").addEventListener("click", () => {
 });
 const th = store.get("cfb.theme"); if (th) document.documentElement.dataset.theme = th;
 addEventListener("hashchange", () => { readHash(); sel.value = state.fav; render(); });
+
+const dlg = $("#dlg");
+const fmtDate = (iso) => {
+  const o = { timeZone: "America/New_York" }, d = new Date(iso);
+  return `<span class="wd">${d.toLocaleDateString("en-US", { ...o, weekday: "short" })}, </span>${d.toLocaleDateString("en-US", { ...o, month: "short", day: "numeric" })}`;
+};
+const teamBy = Object.fromEntries(teamsFile.teams.map((t) => [t.name, t]));
+function openTeam(name) {
+  const t = teamBy[name]; if (!t) return;
+  state.sched = name;
+  const R = computeRecords(teamsFile, gameData, state.week, state.mode)[name];
+  const now = curConfOf(teamsFile, gameData, name);
+  const games = gameData.games.filter((g) => g.home === name || g.away === name).sort((a, b) => a.date.localeCompare(b.date));
+  const old = state.mode === "old";
+  const myOld = t.conf, myNow = now;
+  const rows = games.map((g) => {
+    const home = g.home === name, opp = home ? g.away : g.home;
+    const oppT = teamBy[opp];
+    const played = g.final && g.week <= state.week;
+    const mine = home ? g.hs : g.as, theirs = home ? g.as : g.hs;
+    const ha = g.neutral ? "Neutral" : home ? "Home" : "Away";
+    const pre = g.neutral ? "vs" : home ? "vs" : "@";
+    const res = played ? `<span class="res ${mine > theirs ? "w" : "l"}">${mine > theirs ? "W" : "L"} ${mine}-${theirs}</span>` : `<span class="pend">${g.final ? "After Week " + state.week : "Scheduled"}</span>`;
+    let tags = "";
+    if (!oppT) tags = '<span class="chip">FCS</span>';
+    else {
+      const oppNow = curConfOf(teamsFile, gameData, opp);
+      if (old && oppT.conf === myOld) tags += '<span class="chip">2004 conf</span>';
+      if (!old && oppNow && oppNow === myNow) tags += '<span class="chip">Conf</span>';
+      if (old && oppNow && oppNow === myNow && oppNow !== "18") tags += '<span class="chip">Now conf</span>';
+    }
+    const oppHtml = oppT
+      ? `<span class="opp" data-team="${esc(opp)}" role="button" tabindex="0">${helmet(oppT)}<span>${pre} ${esc(opp)}</span></span>`
+      : `<span class="opp"><span>${pre} ${esc(opp)}</span></span>`;
+    return `<tr><td>${g.week}</td><td>${fmtDate(g.date)}</td><td><span class="ha">${ha}</span></td><td>${oppHtml}${tags}</td><td>${res}</td></tr>`;
+  }).join("");
+  const cn = (id) => CUR_NAMES[id] || "Independent";
+  const line = old
+    ? `${esc(myOld)} in 2004 (${rec(R.ow, R.ol)}) · ${esc(cn(myNow))} now (${rec(R.cw, R.cl)}) · Overall ${rec(R.tw, R.tl)}`
+    : `${esc(cn(myNow))} (${rec(R.ow, R.ol)}) · Overall ${rec(R.tw, R.tl)}`;
+  $("#dlgc").innerHTML = `<div class="dh">${helmet(t)}<div><h3 id="dlgt">${esc(name)}</h3><p>${line}</p></div><button class="btn x" type="button" id="dclose">Close</button></div>
+    <table class="sched"><thead><tr><th>Wk</th><th>Date</th><th>Site</th><th>Opponent</th><th>Result</th></tr></thead><tbody>${rows || '<tr><td colspan="5">No games loaded.</td></tr>'}</tbody></table>
+    <p class="dn">Results shown through Week ${state.week}. Times are Eastern. Click an opponent to open its schedule.</p>`;
+  if (!dlg.open) dlg.showModal();
+  writeHash();
+}
+document.addEventListener("click", (e) => {
+  if (e.target.closest("#dclose")) { dlg.close(); return; }
+  const el = e.target.closest("[data-team]");
+  if (el) openTeam(el.dataset.team);
+  else if (e.target === dlg) dlg.close();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Enter" && e.key !== " ") return;
+  const el = e.target.closest && e.target.closest("[data-team]");
+  if (el && el.getAttribute("role") === "button") { e.preventDefault(); openTeam(el.dataset.team); }
+});
+dlg.addEventListener("close", () => { state.sched = ""; writeHash(); });
 render();
+if (state.sched) openTeam(state.sched);
 </script>
 </body>
 </html>

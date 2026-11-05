@@ -72,12 +72,14 @@ for (let w = 0; w <= 16; w++) {
     if (!comp || !comp.competitors || comp.competitors.length !== 2) continue;
     const completed = !!(comp.status || ev.status)?.type?.completed;
     const sides = {};
+    const ext = {}; // opponents outside our list (FCS, TBD placeholders)
     let ok = true;
     for (const c of comp.competitors) {
       const name = match(c.team || {});
       if (!name) {
         unmatched.set(c.team?.displayName || "?", (unmatched.get(c.team?.displayName || "?") || 0) + 1);
-        ok = false; continue;
+        ext[c.homeAway] = { name: c.team?.displayName || "TBD", score: Number(c.score ?? 0) };
+        continue;
       }
       if (teamMeta[name] && teamMeta[name].espnId !== c.team.id) {
         console.warn(`COLLISION: "${c.team.displayName}" (id ${c.team.id}) also maps to ${name} (id ${teamMeta[name].espnId}); skipping`);
@@ -92,15 +94,18 @@ for (let w = 0; w <= 16; w++) {
         alt: c.team.alternateColor ? "#" + c.team.alternateColor : null,
       };
     }
-    if (!ok || !sides.home || !sides.away) continue; // FCS opponent or unknown team
+    if (!ok) continue;
+    const home = sides.home || ext.home, away = sides.away || ext.away;
+    if (!home || !away || (!sides.home && !sides.away)) continue; // need at least one of our teams
     games.set(ev.id, {
       id: ev.id,
       week: ev.week?.number ?? w,
       date: ev.date,
-      home: sides.home.name, away: sides.away.name,
-      hs: sides.home.score, as: sides.away.score,
+      home: home.name, away: away.name,
+      hs: home.score, as: away.score,
       final: completed,
       neutral: !!comp.neutralSite,
+      ...(!sides.home ? { ext: "home" } : !sides.away ? { ext: "away" } : {}),
     });
   }
 }

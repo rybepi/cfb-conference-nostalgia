@@ -37,7 +37,13 @@ export function computeRecords(teamsFile, gameData, week, mode = "old") {
   for (const g of gameData.games) {
     if (!g.final || g.week > week) continue;
     const a = R[g.home], b = R[g.away];
-    if (!a || !b) continue;
+    if (!a && !b) continue;
+    if (!a || !b) { // one side is an FCS school: counts toward overall record only
+      const mine = a ? g.hs - g.as : g.as - g.hs;
+      const t = a || b;
+      if (mine > 0) t.tw++; else if (mine < 0) t.tl++;
+      continue;
+    }
     const diff = g.hs - g.as;
     if (diff === 0) continue;
     const [win, lose] = diff > 0 ? [a, b] : [b, a];
