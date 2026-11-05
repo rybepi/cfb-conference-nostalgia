@@ -32,7 +32,11 @@ body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 var(--body)}
 .top .wrap{padding-top:18px;padding-bottom:16px}
 h1{font:700 clamp(24px,4.5vw,38px)/1.05 var(--head);letter-spacing:.01em;text-transform:uppercase;margin:0}
 h1 span{color:var(--red)}
-.sub{color:#c9c9c9;margin:6px 0 0;max-width:70ch;font-size:14px}
+.what{margin:6px 0 0}
+.lnk{background:none;border:0;padding:0;font:500 14px var(--body);color:#fff;text-decoration:underline;text-decoration-color:var(--red);text-decoration-thickness:2px;text-underline-offset:4px;cursor:pointer}
+.lnk:hover{color:#ff6b6b}
+.ab{padding:4px 18px 20px;font-size:16px;line-height:1.55}
+.ab p{margin:0}
 .bar{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .bar-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 0}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
@@ -112,7 +116,7 @@ dialog::backdrop{background:rgba(0,0,0,.65)}
 <body>
 <header class="top"><div class="wrap">
   <h1>CFB Conference <span>Nostalgia</span></h1>
-  <p class="sub" id="sub"></p>
+  <p class="what"><button type="button" class="lnk" id="whatbtn">What's this?</button></p>
 </div></header>
 
 <div class="bar" role="region" aria-label="Controls"><div class="wrap">
@@ -162,6 +166,8 @@ dialog::backdrop{background:rgba(0,0,0,.65)}
 </main>
 <div id="toast" role="status" aria-live="polite"></div>
 
+<dialog id="about" aria-labelledby="abt"><div class="dh"><div><h3 id="abt">What's this?</h3></div><button class="btn x" type="button" id="abclose">Close</button></div>
+<div class="ab"><p>This site replays the 2026 college football season through the conference map of 2004, so old leagues and old rivals compete again. Only games between teams that shared a conference then count toward the standings, and programs that were independent or not yet in the FBS are placed in the nearest conference. The top two teams from each conference make a projected playoff, split into Power Tier 1 and Power Tier 2, with each champion facing a runner-up and no seeding. Switch to Current for the same format with today's conferences, and click any team to see its schedule.</p></div></dialog>
 <dialog id="dlg" aria-labelledby="dlgt"><div id="dlgc"></div></dialog>
 
 <script type="module">
@@ -251,9 +257,6 @@ function renderStandings(st) {
 
 function copy(st) {
   const old = state.mode === "old";
-  $("#sub").textContent = old
-    ? "The 2026 season, played out in the 2004 conferences. Records count only games between teams that shared a conference in 2004. Top two from each conference make the playoff."
-    : "The 2026 season in today's conferences. Same format: the top two teams from each conference make the playoff.";
   const names = (l) => l.map((g) => g.label).join(", ");
   const tag = (l) => {
     const odd = buildBracket(l).hasBye;
@@ -357,7 +360,10 @@ function openTeam(name) {
   if (!dlg.open) dlg.showModal();
   writeHash();
 }
+const about = $("#about");
 document.addEventListener("click", (e) => {
+  if (e.target.closest("#whatbtn")) { about.showModal(); return; }
+  if (e.target.closest("#abclose") || e.target === about) { about.close(); return; }
   if (e.target.closest("#dclose")) { dlg.close(); return; }
   const el = e.target.closest("[data-team]");
   if (el) openTeam(el.dataset.team);
