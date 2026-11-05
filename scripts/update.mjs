@@ -92,6 +92,7 @@ for (let w = 0; w <= 16; w++) {
       teamMeta[name] = {
         espnId: c.team.id,
         curConf: String(c.team.conferenceId ?? ""),
+        abbr: c.team.abbreviation || null,
         color: c.team.color ? "#" + c.team.color : null,
         alt: c.team.alternateColor ? "#" + c.team.alternateColor : null,
       };
