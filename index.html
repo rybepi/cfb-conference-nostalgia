@@ -167,10 +167,10 @@ dialog::backdrop{background:rgba(0,0,0,.65)}
 <main class="wrap">
   <section id="playoff" aria-labelledby="ph">
     <h2 id="ph">Unbiased Playoff Bracket</h2>
-    <h3 class="tier" id="t1h">Power Tier 1</h3>
+    <h3 class="tier" id="t1h">Tier 1</h3>
     <p class="tag" id="tag1"></p>
     <div class="bk" id="bk1"></div>
-    <h3 class="tier" id="t2h">Power Tier 2</h3>
+    <h3 class="tier" id="t2h">Tier 2</h3>
     <p class="tag" id="tag2"></p>
     <div class="bk" id="bk2"></div>
   </section>
@@ -278,7 +278,7 @@ function renderStandings(st) {
       <div class="tscroll"><table><thead><tr><th></th><th>Team</th><th>${old ? "2004 conf" : "Conf"}</th>${old ? '<th class="hide-sm">Now conf</th>' : ""}<th>Overall</th><th class="hide-sm">Conf PD</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
   };
   const group = (title, list) => `<h3 style="font:700 20px var(--head);text-transform:uppercase;margin:22px 0 10px">${title}</h3><div class="field">${list.map(make).join("")}</div>`;
-  $("#st").innerHTML = group("Power Tier 1", st.tier1) + group("Power Tier 2", st.tier2);
+  $("#st").innerHTML = group("Tier 1", st.tier1) + group("Tier 2", st.tier2);
 }
 
 function copy(st) {
@@ -302,7 +302,7 @@ function copy(st) {
   $("#abstand").textContent = old
     ? `Teams are ranked only on games against members of their own 2004 conference; non-conference games do not count toward the ranking. Ties break by head-to-head, then record in today's conference, then overall record, then point differential in conference games. The Overall column is the one place every game appears, including non-conference and FCS opponents, and it is shown for context and as a late tiebreaker.`
     : `Teams are ranked only on games against members of their own current conference; non-conference games do not count toward the ranking. Ties break by head-to-head, then overall record, then point differential in conference games. The Overall column is the one place every game appears, including non-conference and FCS opponents, and it is shown for context and as a late tiebreaker.`;
-  $("#abplay").textContent = `The top two teams in each conference make the playoff, split into Power Tier 1 and Power Tier 2, with no seeding and no rankings. Each conference champion plays the runner-up from the next conference in a fixed order, and later rounds pair adjacent winners in bracket order. A bye appears only when a round has an odd number of teams, and it always goes to the last slot, so no committee, poll or random draw decides who gets one.`;
+  $("#abplay").textContent = `The top two teams in each conference make the playoff, split into Tier 1 and Tier 2, with no seeding and no rankings. Each conference champion plays the runner-up from the next conference in a fixed order, and later rounds pair adjacent winners in bracket order. A bye appears only when a round has an odd number of teams, and it always goes to the last slot, so no committee, poll or random draw decides who gets one.`;
   for (const m of ["old", "now"]) $("#m-" + m).setAttribute("aria-pressed", String(state.mode === m));
 }
 
