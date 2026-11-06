@@ -135,18 +135,13 @@ dialog::backdrop{background:rgba(0,0,0,.65)}
 #toast.on{opacity:1}
 .sr{position:absolute;left:-9999px}
 .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-@media (max-width:560px){ dialog{width:calc(100% - 16px);max-height:calc(100dvh - 24px)} .dh{padding:10px 12px} .dh h3{font-size:20px} .sched th:first-child,.sched td:first-child{display:none} .sched td,.sched th{padding:8px 5px} .sched td:last-child,.sched th:last-child{white-space:nowrap;padding-right:10px} .sched .opp{gap:6px;min-width:0} h1{font-size:22px} .htools .ib{width:36px;height:36px} .segb{padding:0 9px!important;font-size:12px} .favw{min-width:0;padding:0 8px} .bar-row{gap:6px} .tscroll table{min-width:440px} .tscroll th:nth-child(2),.tscroll td.t{position:sticky;left:0;background:var(--card);box-shadow:1px 0 0 var(--line);z-index:1} .tscroll th:nth-child(2){background:var(--card)} .tscroll td.t{max-width:150px} .tscroll tr.fav td.t{background:var(--fav)} .tscroll td,.tscroll th{white-space:nowrap}  .wd{display:none} td,th{padding:6px 5px} .sched td,.sched th{padding:8px 6px}  }
+@media (max-width:560px){ .bar .ib{width:36px;height:36px;min-height:36px} .favw{min-height:36px} .segb{min-height:36px} .bar-row{gap:6px!important} .jump,.tools{gap:6px} h1{font-size:20px!important} dialog{width:calc(100% - 16px);max-height:calc(100dvh - 24px)} .dh{padding:10px 12px} .dh h3{font-size:20px} .sched th:first-child,.sched td:first-child{display:none} .sched td,.sched th{padding:8px 5px} .sched td:last-child,.sched th:last-child{white-space:nowrap;padding-right:10px} .sched .opp{gap:6px;min-width:0} h1{font-size:22px} .htools .ib{width:36px;height:36px} .segb{padding:0 9px!important;font-size:12px} .favw{min-width:0;padding:0 8px} .bar-row{gap:6px} .tscroll table{min-width:440px} .tscroll th:nth-child(2),.tscroll td.t{position:sticky;left:0;background:var(--card);box-shadow:1px 0 0 var(--line);z-index:1} .tscroll th:nth-child(2){background:var(--card)} .tscroll td.t{max-width:150px} .tscroll tr.fav td.t{background:var(--fav)} .tscroll td,.tscroll th{white-space:nowrap}  .wd{display:none} td,th{padding:6px 5px} .sched td,.sched th{padding:8px 6px}  }
 @media (prefers-reduced-motion:reduce){ #toast{transition:none} }
 </style>
 </head>
 <body>
 <header class="top"><div class="wrap">
-  <div class="hrow"><div class="ttl"><h1>CFB Conference <span class="nw"><span id="modeword">Nostalgia</span><button type="button" class="info" id="whatbtn" aria-label="What's this?" title="What's this?"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r=".6" fill="currentColor"/></svg></button></span></h1></div>
-  <div class="htools">
-    <button class="ib dk" id="theme" type="button" aria-label="Toggle light or dark" title="Light or dark">
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
-    </button>
-  </div></div>
+  <div class="hrow"><div class="ttl"><h1>CFB Conference <span class="nw"><span id="modeword">Nostalgia</span><button type="button" class="info" id="whatbtn" aria-label="What's this?" title="What's this?"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r=".6" fill="currentColor"/></svg></button></span></h1></div></div>
 </div></header>
 
 <div class="bar" role="region" aria-label="Controls"><div class="wrap">
@@ -163,6 +158,9 @@ dialog::backdrop{background:rgba(0,0,0,.65)}
     </nav>
     </div>
     <div class="favw"><span class="fv" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg><b id="favtx"></b></span><select id="fav" aria-label="Favorite team"><option value="">No favorite team</option></select></div>
+    <button class="ib" id="theme" type="button" aria-label="Toggle light or dark" title="Light or dark">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+    </button>
   </div>
 </div></div>
 
