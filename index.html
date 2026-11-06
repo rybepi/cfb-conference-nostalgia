@@ -59,10 +59,11 @@ select{font:500 15px var(--body);color:var(--ink);background:var(--card);border:
 :focus-visible{outline:3px solid var(--red);outline-offset:2px}
 .sp{flex:1}
 .jump{display:flex;gap:8px}
-.tools{display:flex;gap:8px;margin-left:auto;align-items:center}
+.jump .ib.on{background:var(--red);border-color:var(--red);color:#fff}
+.tools{display:flex;gap:8px;align-items:center}
 .tools::before{content:none}
 select.wk{width:auto}
-.favw{position:relative;display:inline-flex;align-items:center;min-height:40px;min-width:64px;border:1px solid var(--line);border-radius:4px;background:var(--card);padding:0 10px;gap:5px;color:var(--ink)}
+.favw{margin-left:auto;position:relative;display:inline-flex;align-items:center;min-height:40px;min-width:64px;border:1px solid var(--line);border-radius:4px;background:var(--card);padding:0 10px;gap:5px;color:var(--ink)}
 .favw:hover{border-color:var(--red)}
 .favw select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0}
 .favw .fv{display:inline-flex;align-items:center;gap:5px;pointer-events:none}
@@ -142,9 +143,6 @@ dialog::backdrop{background:rgba(0,0,0,.65)}
 <header class="top"><div class="wrap">
   <div class="hrow"><div class="ttl"><h1>CFB Conference <span class="nw"><span id="modeword">Nostalgia</span><button type="button" class="info" id="whatbtn" aria-label="What's this?" title="What's this?"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r=".6" fill="currentColor"/></svg></button></span></h1></div>
   <div class="htools">
-    <button class="ib dk" id="share" type="button" aria-label="Share this week" title="Share this week">
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>
-    </button>
     <button class="ib dk" id="theme" type="button" aria-label="Toggle light or dark" title="Light or dark">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
     </button>
@@ -158,13 +156,13 @@ dialog::backdrop{background:rgba(0,0,0,.65)}
       <button type="button" class="segb" id="m-now" data-m="now">Current</button>
     </div>
     <label for="fav" class="sr">Favorite team</label>
-    <div class="favw"><span class="fv" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg><b id="favtx"></b></span><select id="fav" aria-label="Favorite team"><option value="">No favorite team</option></select></div>
     <div class="tools">
     <nav class="jump" aria-label="Jump to section">
       <button type="button" class="ib" data-go="playoff" aria-label="Jump to playoff" title="Playoff"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg></button>
-      <button type="button" class="ib" data-go="standings" aria-label="Jump to standings" title="Standings"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21v-9h5v9M8 21V5h8v16M16 21v-6h5v6M2 21h20"/></svg></button>
+      <button type="button" class="ib" data-go="standings" aria-label="Jump to standings" title="Standings"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 6h11M10 12h11M10 18h11"/><text x="2" y="8" font-size="7" font-weight="700" fill="currentColor" stroke="none" font-family="Arial,sans-serif">1</text><text x="2" y="14" font-size="7" font-weight="700" fill="currentColor" stroke="none" font-family="Arial,sans-serif">2</text><text x="2" y="20" font-size="7" font-weight="700" fill="currentColor" stroke="none" font-family="Arial,sans-serif">3</text></svg></button>
     </nav>
     </div>
+    <div class="favw"><span class="fv" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg><b id="favtx"></b></span><select id="fav" aria-label="Favorite team"><option value="">No favorite team</option></select></div>
   </div>
 </div></div>
 
@@ -316,8 +314,8 @@ function render() {
   renderBracket($("#bk2"), st.tier2);
   renderStandings(st);
   copy(st);
-  $("#share").title = $("#share").ariaLabel = "Share Week " + state.week;
   writeHash();
+  if (typeof spy === "function") spy();
 }
 
 document.querySelector(".seg").addEventListener("click", (e) => {
@@ -333,15 +331,13 @@ const favLabel = () => { sel.value = state.fav; $("#favtx").textContent = state.
 favLabel();
 sel.addEventListener("change", () => { state.fav = sel.value; store.set("cfb.fav", state.fav); favLabel(); render(); });
 const toast = (msg) => { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); setTimeout(() => t.classList.remove("on"), 1800); };
-$("#share").addEventListener("click", async () => {
-  const p = new URLSearchParams(location.hash.slice(1));
-  p.set("w", state.week);
-  const url = location.href.split("#")[0] + "#" + p.toString();
-  try {
-    if (navigator.share) await navigator.share({ title: document.title, url });
-    else { await navigator.clipboard.writeText(url); toast("Link copied"); }
-  } catch {}
-});
+const spy = () => {
+  const lim = document.querySelector(".bar").offsetHeight + 40;
+  const atEnd = innerHeight + scrollY >= document.documentElement.scrollHeight - 4;
+  const cur = (atEnd || $("#standings").getBoundingClientRect().top <= lim) ? "standings" : "playoff";
+  for (const b of document.querySelectorAll("[data-go]")) { const on = b.dataset.go === cur; b.classList.toggle("on", on); if (on) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); }
+};
+addEventListener("scroll", spy, { passive: true }); addEventListener("resize", spy); spy();
 $("#theme").addEventListener("click", () => {
   const r = document.documentElement;
   const dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
